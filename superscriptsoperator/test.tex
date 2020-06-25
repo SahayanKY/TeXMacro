@@ -1,0 +1,78 @@
+\documentclass{jsarticle}
+\usepackage{amsmath}
+\usepackage{braket}
+
+\makeatletter
+\newcommand{\rightoperator}[3]{%
+	%#1:演算子をかける対象を括弧で囲むかどうか
+	%	0->囲まない
+	%	1->()で囲む
+	%	2->{}で囲む
+	%#2:演算子
+	%#3:演算子をかける対象
+	{\ensuremath{%
+		\ifnum #1=0%
+			#3%
+		\else{%
+			\ifnum #1=1%
+				\left(#3\right)%
+			\else{%
+				\ifnum #1=2%
+					\left\{#3\right\}%
+				\else{%
+					\text{エラー}%
+				}\fi%
+			}\fi%
+		}\fi%
+		#2%
+	}}%
+}
+
+\newcommand{\adj}[2][0]{%
+	%#1:演算子をかける対象を括弧で囲むかどうか
+	%	0->囲まない
+	%	1->()で囲む
+	%	2->{}で囲む
+	%#2:演算子をかける対象
+	%\operatorの中でも右上付き文字を使う演算子用のマクロ
+	%上付き文字が#3に含まれる場合、#3^{#2}ではdouble superscriptエラーが発生する
+	%しかし、{#3}^{#2}では#3に下付き文字が存在する場合上付き文字に不自然な空白が生じる
+	%->#3中に^が存在するかどうかで処理を分岐させる
+	{\ensuremath{%
+		%#3中に^が含まれるかを確認
+		\newif\ifcaretcontain%
+		\caretcontainfalse%デフォルトはfalse
+		\ifnum #1=0%
+			%括弧をつけない場合
+			\@tfor \@tempa:=#2\do{%
+				\ifcat\@tempa ^%^と同じカテゴリーコードの文字は存在しないのでカテゴリーコードで比較
+					\caretcontaintrue%caret(^)を含む場合はtrueに変更
+				\fi%
+			}%
+			\ifcaretcontain%
+				{#2}^{\dagger}%
+			\else{%
+				#2^{\dagger}%
+			}\fi%
+		\else{%
+			\rightoperator{#1}{{}^{\dagger}}{#2}%
+		}\fi%
+	}}%
+}
+
+
+\makeatother
+
+
+\begin{document}
+\tracingonline=1
+\tracingmacros=1
+\tracingcommands=1
+
+\begin{align}
+	\csname partial\endcsname
+\end{align}
+
+
+
+\end{document}
