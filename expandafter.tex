@@ -7,6 +7,8 @@
 \def\testB#1{[#1]}
 \def\testC{\testB\testA}
 \def\testD{D}
+\def\testE{E}
+\def\testF{F}
 
 \makeatother
 
@@ -52,6 +54,7 @@
 %D[A]B
 \expandafter\testD\expandafter\expandafter\testC
 %\testD\expandafter\testB\testA
+%D\expandafter\testB\testA
 %D\testB{A}{B}
 %D[A]{B}
 %->正
@@ -62,5 +65,15 @@
 %D[{A}{B}]
 %->誤
 
+5
+
+%DEF
+\expandafter\testD\expandafter\expandafter\testE\testF
+%\testE -> \testD -> \testFの順に展開されている
+%\testD\expandafter E\testF
+%D\expandafter E\testF
+%DEF
+%
+%一回展開したら、まだ展開していないところまで戻る？
 
 \end{document}
