@@ -554,7 +554,6 @@ FUNCTION {article}
       format.pages output
     }
   if$
-  note output
   fin.entry
 }
 
@@ -606,7 +605,6 @@ FUNCTION {book}
   if$
   format.edition output
   format.date "year" output.check
-  note output
   fin.entry
 }
 
@@ -623,7 +621,6 @@ FUNCTION {booklet}
     { address "," * output}
   if$
   format.date "year" output.check
-  note output
   fin.entry
 }
 
@@ -641,7 +638,6 @@ FUNCTION {inbook}
     if$
     }
   if$
-  note output
   fin.entry
 }
 
@@ -651,7 +647,6 @@ FUNCTION {incollection}
   " " title * ".  " * "title" output.check
   in.book
   format.date "year" output.check
-  note output
   fin.entry
 }
 
@@ -694,7 +689,6 @@ FUNCTION {manual}
   if$
   format.edition output
   format.date output
-  note output
   fin.entry
 }
 
@@ -705,7 +699,6 @@ FUNCTION {mastersthesis}
   "Master's thesis, " output
   thesis.affilation
   format.date "year" output.check
-  note output
   fin.entry
 }
 
@@ -721,7 +714,6 @@ FUNCTION {misc}
     {howpublished "," * output }
   if$
   format.date output
-  note output
   fin.entry
   empty.misc.check
 }
@@ -733,7 +725,6 @@ FUNCTION {phdthesis}
   format.thesis output.nonnull
   thesis.affilation
   format.date "year" output.check
-  note output
   fin.entry
 }
 
@@ -764,7 +755,6 @@ FUNCTION {proceedings}
       if$
       }
   if$
-  note output
   fin.entry
 }
 
@@ -787,7 +777,6 @@ FUNCTION {techreport}
     { address "," * output }
   if$
   format.date "year" output.check
-  note output
   fin.entry
 }
 
