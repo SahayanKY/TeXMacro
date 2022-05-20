@@ -64,6 +64,14 @@ class AbbConverter:
         tokens = self.__getTokens(name)
         # 冠詞などを除去
         tokens = self.__dropTokens(tokens)
+
+        if len(tokens) == 1:
+            # Natureなど、名詞1単語のみの名前の場合は略語に置換しない
+            # 辞書に新しく追加する
+            abb = tokens[0][0]
+            self.__journalDict[name] = abb
+            return abb
+
         # 略語トークンリストを取得
         tokens = [self.__convertAbb(t) for t,pos in tokens]
         # トークンを結合して一つの文にする
