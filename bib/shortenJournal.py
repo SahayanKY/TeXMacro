@@ -39,13 +39,17 @@ class AbbConverter:
         # 単語の略語への変換表をロードする
         self.__wordTablePath = 'ltwa_20210702.csv'
         df = pd.read_csv(self.__wordTablePath, encoding='utf-8', sep=';')
+        # n.a.を除外
+        df = df[df['ABBREVIATIONS']!='n.a.']
+
         # chemic- -> chem. の様に前方一致のパターン1
         # -field -> -f. の様に後方一致のパターン2
         # -graph- -> -gr. の様に前方・後方一致のパターン3
         # の3種に分けて考える
-        self.__convertTable1 = df[df['WORDS'].str.contains('-$')]
-        self.__convertTable2 = df[df['WORDS'].str.contains('^-')]
-        self.__convertTable3 = df[df['WORDS'].str.contains('^-[^-]+-$')]
+        # 先頭・末端のハイフンは取り除いておく
+        self.__convertTable1 = df[df['WORDS'].str.contains('^[^-].+-$')].replace('-$', '', regex=True)
+        self.__convertTable2 = df[df['WORDS'].str.contains('^-.+[^-]$')].replace('^-', '', regex=True)
+        self.__convertTable3 = df[df['WORDS'].str.contains('^-[^-]+-$')].replace('^-', '', regex=True).replace('-$', '', regex=True)
 
 
     def convert(self, name):
@@ -69,13 +73,12 @@ class AbbConverter:
             # Natureなど、名詞1単語のみの名前の場合は略語に置換しない
             # 辞書に新しく追加する
             abb = tokens[0][0]
-            self.__journalDict[name] = abb
-            return abb
-
-        # 略語トークンリストを取得
-        tokens = [self.__convertAbb(t) for t,pos in tokens]
-        # トークンを結合して一つの文にする
-        abb = self.__joinTokens(tokens)
+        else:
+            # 一般の場合(2単語以上の略語を含む場合)
+            # 略語トークンリストを取得
+            tokens = [self.__convertAbb(t) for t,pos in tokens]
+            # トークンを結合して一つの文にする
+            abb = self.__joinTokens(tokens)
 
         # 辞書に新しく追加する
         self.__journalDict[name] = abb
@@ -110,10 +113,54 @@ class AbbConverter:
         """
         入力されたトークン(単語)をISO4(LTWA)の変換表に基づいて略語に直す
         """
-        # TODO 実装
-        abb = none
 
-        return abb
+        # chemic- -> chem. の様に前方一致のパターン1
+        # -graph- -> -gr. の様に前方・後方一致のパターン3
+        # -field -> -f. の様に後方一致のパターン2
+        # この順に置換していく
+
+        # 'chemic' in 'chemical'等を判定する
+        pattfunc = lambda patt : patt.upper() in token.upper()
+
+        ##########################################
+        # パターン1
+        df = self.__convertTable1
+        # 先頭の2文字が合うものをまず抽出(case:大文字小文字区別なし)
+        df = df[df['WORDS'].str.contains('^'+token[0:2], case=False)]
+        # 合うパターンを探す
+        df = df[df['WORDS'].map(pattfunc)]
+        if len(df) != 0:
+            # 最長マッチしているパターンを取り出し、そのパターンに従って略語に置換
+            return df.iloc[df['WORDS'].map(len).argmax()]['ABBREVIATIONS']
+
+        ##########################################
+        # パターン3
+        df = self.__convertTable3
+        # 合うパターンを探す
+        df = df[df['WORDS'].map(pattfunc)]
+
+        if len(df) != 0:
+            # TODO -graph- -> -gr. ならハイフンの部分を付け足してあげる必要があるので処理を追加
+            # 最長マッチしているパターンを取り出し、そのパターンに従って略語に置換
+            return df.iloc[df['WORDS'].map(len).argmax()]['ABBREVIATIONS']
+
+        ##########################################
+        # パターン2
+        df = self.__convertTable2
+        # 末端の2文字が合うものをまず抽出(case:大文字小文字区別なし)
+        df = df[df['WORDS'].str.contains(token[-2:]+'$', case=False)]
+        # 合うパターンを探す
+        df = df[df['WORDS'].map(pattfunc)]
+
+        if len(df) != 0:
+            # TODO -field -> -f. ならハイフンの部分を付け足してあげる必要があるので処理を追加
+            # 最長マッチしているパターンを取り出し、そのパターンに従って略語に置換
+            return df.iloc[df['WORDS'].map(len).argmax()]['ABBREVIATIONS']
+
+        #
+        # 合うパターンがなかった場合
+        # そのまま返す
+        return token
 
     def __joinTokens(self, tokens):
         """
