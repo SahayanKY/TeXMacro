@@ -131,7 +131,10 @@ class AbbConverter:
         df = df[df['WORDS'].map(pattfunc)]
         if len(df) != 0:
             # 最長マッチしているパターンを取り出し、そのパターンに従って略語に置換
-            return df.iloc[df['WORDS'].map(len).argmax()]['ABBREVIATIONS']
+            abb =  df.iloc[df['WORDS'].map(len).argmax()]['ABBREVIATIONS']
+            # 先頭の文字を大文字に変えて返す
+            result = abb.capitalize() + '.'
+            return result
 
         ##########################################
         # パターン3
@@ -140,9 +143,14 @@ class AbbConverter:
         df = df[df['WORDS'].map(pattfunc)]
 
         if len(df) != 0:
-            # TODO -graph- -> -gr. ならハイフンの部分を付け足してあげる必要があるので処理を追加
             # 最長マッチしているパターンを取り出し、そのパターンに従って略語に置換
-            return df.iloc[df['WORDS'].map(len).argmax()]['ABBREVIATIONS']
+            # -graph- -> -gr. : word = 'graph', abb = 'gr'
+            word, abb = df.iloc[df['WORDS'].map(len).argmax()][['WORDS', 'ABBREVIATIONS']]
+            # -graph- -> -gr. ならハイフンの部分を付け足してあげる必要がある
+            # ハイフンの部分を取り出すためにword以降を取り除く
+            hyphen = re.sub(word+'.*', '', token)
+            result = hyphen.capitalize() + abb + '.'
+            return result
 
         ##########################################
         # パターン2
@@ -153,9 +161,14 @@ class AbbConverter:
         df = df[df['WORDS'].map(pattfunc)]
 
         if len(df) != 0:
-            # TODO -field -> -f. ならハイフンの部分を付け足してあげる必要があるので処理を追加
             # 最長マッチしているパターンを取り出し、そのパターンに従って略語に置換
-            return df.iloc[df['WORDS'].map(len).argmax()]['ABBREVIATIONS']
+            # -field -> -f. : word = 'field', abb = 'f'
+            word, abb =  df.iloc[df['WORDS'].map(len).argmax()][['WORDS', 'ABBREVIATIONS']]
+            # -field -> -f. ならハイフンの部分を付け足してあげる必要がある
+            # ハイフンの部分を取り出すためにword以降を取り除く
+            hyphen = re.sub(word+'.*', '', token)
+            result = hyphen.capitalize() + abb + '.'
+            return result
 
         #
         # 合うパターンがなかった場合
