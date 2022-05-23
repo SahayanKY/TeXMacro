@@ -33,8 +33,11 @@ class AbbConverter:
         # 一々変換するのは無駄なので変換した結果を保持しておく
         # 以前の変換履歴をロードする
         self.__journalTablePath = 'journal.csv'
-        df = pd.read_csv(self.__journalTablePath, encoding='utf-8', sep=';')
-        self.__journalDict = df.set_index('NAME').to_dict()['ABBREVIATION']
+        if os.path.exists(self.__journalTablePath):
+            df = pd.read_csv(self.__journalTablePath, encoding='utf-8', sep=';')
+            self.__journalDict = df.set_index('NAME').to_dict()['ABBREVIATION']
+        else:
+            self.__journalDict = {}
 
         # 単語の略語への変換表をロードする
         self.__wordTablePath = 'ltwa_20210702.csv'
@@ -42,11 +45,13 @@ class AbbConverter:
         # n.a.を除外
         df = df[df['ABBREVIATIONS']!='n.a.']
 
+        # journal -> j. の様に完全一致のパターン0
         # chemic- -> chem. の様に前方一致のパターン1
         # -field -> -f. の様に後方一致のパターン2
         # -graph- -> -gr. の様に前方・後方一致のパターン3
         # の3種に分けて考える
         # 先頭・末端のハイフンは取り除いておく
+        self.__convertTable0 = df[df['WORDS'].str.contains('^[^-].+[^-]$')]
         self.__convertTable1 = df[df['WORDS'].str.contains('^[^-].+-$')].replace('-$', '', regex=True)
         self.__convertTable2 = df[df['WORDS'].str.contains('^-.+[^-]$')].replace('^-', '', regex=True)
         self.__convertTable3 = df[df['WORDS'].str.contains('^-[^-]+-$')].replace('^-', '', regex=True).replace('-$', '', regex=True)
@@ -105,7 +110,7 @@ class AbbConverter:
         IN ... of, after, for (前置詞、従属接続詞)
         CC ... and, (調整接続詞)
         """
-        droppedTokens = [(t,pos) for t,pos in tokens if pos not in ['DT','IN','NN']]
+        droppedTokens = [(t,pos) for t,pos in tokens if pos not in ['DT','IN','CC']]
 
         return droppedTokens
 
@@ -119,11 +124,28 @@ class AbbConverter:
         # -field -> -f. の様に後方一致のパターン2
         # この順に置換していく
 
+        print('next converted: {}'.format(token))
+
         # 'chemic' in 'chemical'等を判定する
         pattfunc = lambda patt : patt.upper() in token.upper()
 
         ##########################################
+        # パターン0
+        df = self.__convertTable0
+        # 一致するパターンを取り出す(case:大文字小文字区別なし)
+        df = df[df['WORDS'].str.contains('^'+token+'$', case=False)]
+        if len(df) == 1:
+            # 略語を取り出す
+            abb = df.iloc[0]['ABBREVIATIONS']
+            # 先頭の文字を大文字に変えて返す
+            result = abb.capitalize()
+            return result
+
+        ##########################################
         # パターン1
+        #
+        # 例えばchefjeoiachemic-のようなパターンが存在した場合にこれに引っかかるのでは？
+        # -> 'chefjeoiachemic' not in 'chemical'なので大丈夫
         df = self.__convertTable1
         # 先頭の2文字が合うものをまず抽出(case:大文字小文字区別なし)
         df = df[df['WORDS'].str.contains('^'+token[0:2], case=False)]
@@ -133,7 +155,7 @@ class AbbConverter:
             # 最長マッチしているパターンを取り出し、そのパターンに従って略語に置換
             abb =  df.iloc[df['WORDS'].map(len).argmax()]['ABBREVIATIONS']
             # 先頭の文字を大文字に変えて返す
-            result = abb.capitalize() + '.'
+            result = abb.capitalize()
             return result
 
         ##########################################
@@ -149,7 +171,7 @@ class AbbConverter:
             # -graph- -> -gr. ならハイフンの部分を付け足してあげる必要がある
             # ハイフンの部分を取り出すためにword以降を取り除く
             hyphen = re.sub(word+'.*', '', token)
-            result = hyphen.capitalize() + abb + '.'
+            result = hyphen.capitalize() + abb
             return result
 
         ##########################################
@@ -167,7 +189,7 @@ class AbbConverter:
             # -field -> -f. ならハイフンの部分を付け足してあげる必要がある
             # ハイフンの部分を取り出すためにword以降を取り除く
             hyphen = re.sub(word+'.*', '', token)
-            result = hyphen.capitalize() + abb + '.'
+            result = hyphen.capitalize() + abb
             return result
 
         #
