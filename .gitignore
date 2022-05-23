@@ -2,3 +2,4 @@
 .pydevproject
 .texlipse
 **/temp/
+__pycache__/
