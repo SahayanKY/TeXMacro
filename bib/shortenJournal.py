@@ -61,6 +61,9 @@ class AbbConverter:
         """
         入力された文字列nameをISO4に基づいて略称を得る
         """
+        # TODO 複合語の略称を考慮した変換になっていないので修正
+        # united states of america等
+
         if name in self.__journalDict:
             # 以前に変換したことのある名称ならば辞書を参照し、それを返す
             return self.__journalDict[name]
