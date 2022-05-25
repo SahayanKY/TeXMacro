@@ -45,6 +45,13 @@ class AbbConverter:
         # n.a.を除外
         df = df[df['ABBREVIATIONS']!='n.a.']
 
+
+        # 複合語の変換テーブル
+        self.__compwordConvertTable = df[df['WORDS'].str.contains(' ')]
+
+        # 複合語を除外
+        df = df[~df['WORDS'].str.contains()]
+        #
         # journal -> j. の様に完全一致のパターン0
         # chemic- -> chem. の様に前方一致のパターン1
         # -field -> -f. の様に後方一致のパターン2
@@ -130,7 +137,7 @@ class AbbConverter:
         print('next converted: {}'.format(token))
 
         # 'chemic' in 'chemical'等を判定する
-        pattfunc = lambda patt : patt.upper() in token.upper()
+        matchfunc = lambda patt : patt.upper() in token.upper()
 
         ##########################################
         # パターン0
@@ -153,7 +160,7 @@ class AbbConverter:
         # 先頭の2文字が合うものをまず抽出(case:大文字小文字区別なし)
         df = df[df['WORDS'].str.contains('^'+token[0:2], case=False)]
         # 合うパターンを探す
-        df = df[df['WORDS'].map(pattfunc)]
+        df = df[df['WORDS'].map(matchfunc)]
         if len(df) != 0:
             # 最長マッチしているパターンを取り出し、そのパターンに従って略語に置換
             abb =  df.iloc[df['WORDS'].map(len).argmax()]['ABBREVIATIONS']
@@ -165,7 +172,7 @@ class AbbConverter:
         # パターン3
         df = self.__convertTable3
         # 合うパターンを探す
-        df = df[df['WORDS'].map(pattfunc)]
+        df = df[df['WORDS'].map(matchfunc)]
 
         if len(df) != 0:
             # 最長マッチしているパターンを取り出し、そのパターンに従って略語に置換
@@ -173,7 +180,7 @@ class AbbConverter:
             word, abb = df.iloc[df['WORDS'].map(len).argmax()][['WORDS', 'ABBREVIATIONS']]
             # -graph- -> -gr. ならハイフンの部分を付け足してあげる必要がある
             # ハイフンの部分を取り出すためにword以降を取り除く
-            hyphen = re.sub(word+'.*', '', token)
+            hyphen = re.sub(word.lower()+'.*', '', token.lower())
             result = hyphen.capitalize() + abb
             return result
 
@@ -183,7 +190,7 @@ class AbbConverter:
         # 末端の2文字が合うものをまず抽出(case:大文字小文字区別なし)
         df = df[df['WORDS'].str.contains(token[-2:]+'$', case=False)]
         # 合うパターンを探す
-        df = df[df['WORDS'].map(pattfunc)]
+        df = df[df['WORDS'].map(matchfunc)]
 
         if len(df) != 0:
             # 最長マッチしているパターンを取り出し、そのパターンに従って略語に置換
@@ -191,7 +198,7 @@ class AbbConverter:
             word, abb =  df.iloc[df['WORDS'].map(len).argmax()][['WORDS', 'ABBREVIATIONS']]
             # -field -> -f. ならハイフンの部分を付け足してあげる必要がある
             # ハイフンの部分を取り出すためにword以降を取り除く
-            hyphen = re.sub(word+'.*', '', token)
+            hyphen = re.sub(word.lower()+'.*', '', token.lower())
             result = hyphen.capitalize() + abb
             return result
 
@@ -212,6 +219,48 @@ class AbbConverter:
         sentence = re.sub(' :', ':', sentence)
 
         return sentence
+
+    def __checkCompoundWord(self, name):
+        """
+        入力された雑誌名中に複合語が存在するかどうかをチェックする
+        united states of america等
+
+        戻り値:
+        result, compword
+        result: 存在すればtrue、存在しなければfalse
+        compword: マッチした複合語のパターン、存在しなければnone
+        """
+        # 簡単にスクリーニングするためにパターンのハイフンを除去
+        df = self.__compwordConvertTable
+        df = df.replace('^-', '', regex=True).replace('-$', '', regex=True)
+
+        # 'chemic' in 'chemical'等を判定する
+        matchfunc = lambda patt : patt.upper() in name.upper()
+        # 判定
+        matchresult = df['WORDS'].map(matchfunc)
+
+        if not matchresult.any():
+            # 一つもかからなかった場合
+            return false, none
+
+        #####
+        # マッチしたパターンが存在する場合
+        # マッチしたパターンが複数あれば、最長のものが有力
+        matchpattdf = df[matchresult]
+        matchpatt = matchpattdf.iloc[matchpattdf['WORDS'].map(len).argmax()]['WORDS']
+
+        #
+        # ただし、'united states of americafejoifea'等、name中のマッチ部分の後ろに余計なものが付いている可能性がある
+        # その可能性については次の文字('f')がalphabeticかどうかで判断する
+        # (isalphaはアクセント記号付きでもTrueを返す)
+        # (isalphaは空文字の場合Falseを返すのでそこは条件分岐)
+        nextchar = re.sub('.*'+matchpatt.upper(), '', name.upper())[0]
+
+        if nextchar.isalpha() or nextchar == '':
+            return true, matchpatt
+        else:
+            return false, none
+
 
     def updateJournalTable(self):
         """
