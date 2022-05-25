@@ -252,14 +252,15 @@ class AbbConverter:
         #
         # ただし、'united states of americafejoifea'等、name中のマッチ部分の後ろに余計なものが付いている可能性がある
         # その可能性については次の文字('f')がalphabeticかどうかで判断する
-        # (isalphaはアクセント記号付きでもTrueを返す)
-        # (isalphaは空文字の場合Falseを返すのでそこは条件分岐)
+        #     isalphaはアクセント記号付きでもTrueを返す
+        #     Trueの場合、余計なものがついているということなので、(false,none)を返す
+        #     isalphaは空文字の場合Falseを返すので特に問題なし
         nextchar = re.sub('.*'+matchpatt.upper(), '', name.upper())[0]
 
-        if nextchar.isalpha() or nextchar == '':
-            return true, matchpatt
-        else:
+        if nextchar.isalpha():
             return false, none
+        else:
+            return true, matchpatt
 
 
     def updateJournalTable(self):
