@@ -50,7 +50,7 @@ class AbbConverter:
         self.__compwordConvertTable = df[df['WORDS'].str.contains(' ')]
 
         # 複合語を除外
-        df = df[~df['WORDS'].str.contains()]
+        df = df[~df['WORDS'].str.contains(' ')]
         #
         # journal -> j. の様に完全一致のパターン0
         # chemic- -> chem. の様に前方一致のパターン1
@@ -262,6 +262,7 @@ class AbbConverter:
         else:
             return true, matchpatt
 
+        # TODO 複数の複合語がname中に存在する場合について考慮できていない
 
     def updateJournalTable(self):
         """
