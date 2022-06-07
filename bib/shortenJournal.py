@@ -81,6 +81,10 @@ class AbbConverter:
 
         # トークンリストを取得
         tokens = self.__getTokens(name)
+
+        # 複合語を変換
+        # 複合語に冠詞等が含まれている可能性があるため、dropする前に置換しておく
+
         # 冠詞などを除去
         tokens = self.__dropTokens(tokens)
 
@@ -222,13 +226,12 @@ class AbbConverter:
 
     def __checkCompoundWord(self, name):
         """
-        入力された雑誌名中に複合語が存在するかどうかをチェックする
-        united states of america等
+        入力された雑誌名中に複合語(united states of america等)が存在するかどうかをとりあえずチェックする
+        候補を絞り込むだけなので、正確にマッチングはしない
 
         戻り値:
-        result, compword
-        result: 存在すればtrue、存在しなければfalse
-        compword: マッチした複合語のパターン、存在しなければnone
+        マッチした複合語の変換パターンDataFrame
+        候補がない場合は空のDataFrameになる
         """
         # 簡単にスクリーニングするためにパターンのハイフンを除去
         df = self.__compwordConvertTable
@@ -239,30 +242,12 @@ class AbbConverter:
         # 判定
         matchresult = df['WORDS'].map(matchfunc)
 
-        if not matchresult.any():
-            # 一つもかからなかった場合
-            return false, none
-
-        #####
-        # マッチしたパターンが存在する場合
-        # マッチしたパターンが複数あれば、最長のものが有力
+        # マッチしたパターンが無くても複数あってもとりあえず候補全部を返す
+        # マッチパターンがない場合はlen(df)==0となるのでそれで判別
         matchpattdf = df[matchresult]
-        matchpatt = matchpattdf.iloc[matchpattdf['WORDS'].map(len).argmax()]['WORDS']
+        return self.__compwordConvertTable.loc[matchpattdf.index]
 
-        #
-        # ただし、'united states of americafejoifea'等、name中のマッチ部分の後ろに余計なものが付いている可能性がある
-        # その可能性については次の文字('f')がalphabeticかどうかで判断する
-        #     isalphaはアクセント記号付きでもTrueを返す
-        #     Trueの場合、余計なものがついているということなので、(false,none)を返す
-        #     isalphaは空文字の場合Falseを返すので特に問題なし
-        nextchar = re.sub('.*'+matchpatt.upper(), '', name.upper())[0]
 
-        if nextchar.isalpha():
-            return false, none
-        else:
-            return true, matchpatt
-
-        # TODO 複数の複合語がname中に存在する場合について考慮できていない
 
     def updateJournalTable(self):
         """
