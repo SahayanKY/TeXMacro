@@ -68,8 +68,6 @@ class AbbConverter:
         """
         入力された文字列nameをISO4に基づいて略称を得る
         """
-        # TODO 複合語の略称を考慮した変換になっていないので修正
-        # united states of america等
 
         if name in self.__journalDict:
             # 以前に変換したことのある名称ならば辞書を参照し、それを返す
@@ -79,11 +77,19 @@ class AbbConverter:
         # 新しく略称を生成する場合
         #
 
+        # 複合語をまず変換
+        # united states of america等
+        # 複合語に冠詞等が含まれている可能性があるため、dropする前に置換しておく
+        # 該当しそうな複合語パターンを絞り込む
+        compwordConvertTable = self.__checkCompoundWord(name)
+        if len(compwordConvertTable) != 0:
+            # 該当しそうなパターンが見つかった場合
+            # TODO 複数の複合語が含まれている可能性を考慮した置換の仕方にする
+
+            pass
+
         # トークンリストを取得
         tokens = self.__getTokens(name)
-
-        # 複合語を変換
-        # 複合語に冠詞等が含まれている可能性があるため、dropする前に置換しておく
 
         # 冠詞などを除去
         tokens = self.__dropTokens(tokens)
