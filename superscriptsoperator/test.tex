@@ -6,128 +6,44 @@
 \newcommand{\rightoperator}[3]{%
 	%#1:演算子をかける対象を括弧で囲むかどうか
 	%	0->囲まない
-	%	1->()で囲む
-	%	2->{}で囲む
+	%	n->囲まない(ただし括弧と同様の挙動, double subscript対策)
+	%	p->()で囲む
+	%	c->{}で囲む
 	%#2:演算子
 	%#3:演算子をかける対象
-	{\ensuremath{%
-		\ifnum #1=0%
-			#3%
+	\ensuremath{%
+		\ifx 0#1%
+			#3#2%
 		\else{%
-			\ifnum #1=1%
-				\left(#3\right)%
+			\ifx n#1%
+				{#3}#2%
 			\else{%
-				\ifnum #1=2%
-					\left\{#3\right\}%
+				\ifx p#1%
+					\left(#3\right)#2%
 				\else{%
-					\text{エラー}%
+					\ifx c#1%
+						\left\{#3\right\}#2%
+					\else{%
+						\text{エラー}%
+					}\fi%
 				}\fi%
 			}\fi%
 		}\fi%
-		#2%
-	}}%
+	}%
 }
 
-%------------------------------------------------------------
-% \newcommand{\adj}[2][0]{%
-% 	%#1:演算子をかける対象を括弧で囲むかどうか
-% 	%	0->囲まない
-% 	%	1->()で囲む
-% 	%	2->{}で囲む
-% 	%#2:演算子をかける対象
-% 	%\operatorの中でも右上付き文字を使う演算子用のマクロ
-% 	%上付き文字が#3に含まれる場合、#3^{#2}ではdouble superscriptエラーが発生する
-% 	%しかし、{#3}^{#2}では#3に下付き文字が存在する場合上付き文字に不自然な空白が生じる
-% 	%->#3中に^が存在するかどうかで処理を分岐させる
-% 	{\ensuremath{%
-% 		%#3中に^が含まれるかを確認
-% 		\newif\ifcaretcontain%
-% 		\caretcontainfalse%デフォルトはfalse
-% 		\ifnum #1=0%
-% 			%括弧をつけない場合
-% 			\@tfor \@tempa:=#2\do{%
-% 				\ifcat\@tempa ^%^と同じカテゴリーコードの文字は存在しないのでカテゴリーコードで比較
-% 					\caretcontaintrue%caret(^)を含む場合はtrueに変更
-% 				\fi%
-% 			}%
-% 			\ifcaretcontain%
-% 				{#2}^{\dagger}%
-% 			\else{%
-% 				#2^{\dagger}%
-% 			}\fi%
-% 		\else{%
-% 			\rightoperator{#1}{{}^{\dagger}}{#2}%
-% 		}\fi%
-% 	}}%
-% }
-%\adj{\overline{1}}実行結果
-% \@tfor #1:=->\@tf@r #1
-% #1<-\@tempa
-%
-% \@tf@r #1#2\do #3->\def \@fortmp {#2}\ifx \@fortmp \space \else \@tforloop #2\@
-% nil \@nil \@@ #1{#3}\fi
-% #1<-\@tempa
-% #2<- \overline {1}
-% #3<-\ifcat \@tempa ^\caretcontaintrue \fi
-% {\def}
-%
-% \@tforloop #1#2\@@ #3#4->\def #3{#1}\ifx #3\@nnil \expandafter \@fornoop \else
-% #4\relax \expandafter \@tforloop \fi #2\@@ #3{#4}
-% #1<-\overline
-% #2<-{1}\@nil \@nil
-% #3<-\@tempa
-% #4<-\ifcat \@tempa ^\caretcontaintrue \fi
-% {\def}
-%
-% \@tempa ->\overline
-%
-% \overline ->\protect \overline
-%
-% \overline  #1->\@@overline {#1}
-% #1<-^
-% {begin-group character {}
-% {superscript character ^}
-% ! Missing { inserted.
-% <to be read again>
-%                    }
-% l.130 \end{align}
-%
-%恐らくtforで指定した引数は全く展開されずに@tempaに代入される？
-%
-%
 
 %------------------------------------------------------------------
 \newcommand{\adj}[2][0]{%
 	%#1:演算子をかける対象を括弧で囲むかどうか
 	%	0->囲まない
-	%	1->()で囲む
-	%	2->{}で囲む
+	%	n->囲まない(ただし括弧と同様の挙動, double subscript対策)
+	%	p->()で囲む
+	%	c->{}で囲む
 	%#2:演算子をかける対象
-	%\operatorの中でも右上付き文字を使う演算子用のマクロ
-	%上付き文字が#3に含まれる場合、#3^{#2}ではdouble superscriptエラーが発生する
-	%しかし、{#3}^{#2}では#3に下付き文字が存在する場合上付き文字に不自然な空白が生じる
-	%->#3中に^が存在するかどうかで処理を分岐させる
-	{\ensuremath{%
-		%#3中に^が含まれるかを確認
-		\newif\ifcaretcontain%
-		\caretcontainfalse%デフォルトはfalse
-		\ifnum #1=0%
-		\edef\hoge{#2}
-			%括弧をつけない場合
-			\expandafter\@tfor\expandafter\@tempa\expandafter:\expandafter=\hoge\do{%
-				\ifcat\@tempa ^%^と同じカテゴリーコードの文字は存在しないのでカテゴリーコードで比較
-					\caretcontaintrue%caret(^)を含む場合はtrueに変更
-				\fi%
-			}%
-			\ifcaretcontain%
-				{#2}^{\dagger}%
-			\else{%
-				#2^{\dagger}%
-			}\fi%
-		\else{%
-			\rightoperator{#1}{{}^{\dagger}}{#2}%
-		}\fi%
-	}}%
+	\ensuremath{%
+		\rightoperator{#1}{^{\dagger}}{#2}%
+	}%
 }
 %
 %\adj{a_{ij}}のように括弧内に2文字以上が存在するとうまくいかない
@@ -142,14 +58,18 @@
 \tracingcommands=1
 
 \begin{align}
-% 	\adj{a_i} \\
-% 	\adj{a_i^k} \\
-% 	\adj{a_{i}} \\
-	\adj{a_{ij}}
-% 	\adj{a^{ijk}} \\
-% 	\adj{\overline{1}} \\
-% 	\adj{\braket{i|h|j}} \\
-% 	\adj[1]{a_i a_j}
+ 	\adj{a_i} \\
+ 	\adj[n]{a_i^k} \\
+ 	\adj{a_{i}} \\
+	\adj{a_{ij}} \\
+ 	\adj[n]{a^{ijk}} \\
+ 	\adj{\overline{1}} \\
+ 	\adj{\braket{i|h|j}} \\
+ 	\adj[p]{a_i a_j}
+\end{align}
+
+\begin{align}
+	\adj[n]{\adj{a_i}}
 \end{align}
 
 
