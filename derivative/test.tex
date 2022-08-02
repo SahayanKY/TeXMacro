@@ -1,5 +1,6 @@
 \documentclass{jsarticle}
 \usepackage{amsmath}
+\usepackage{bm}
 \usepackage{xparse}
 
 \makeatletter
@@ -38,6 +39,7 @@
 	\setcounter{@derivative@totalOrder}{0}%
 }
 
+% version1
 % https://zrbabbler.hatenablog.com/entry/20110903/1315024613
 % 偏微分の分母と分子を一時的に保存
 \newcommand{\@derivative@denominator}{\relax} % 分母
@@ -52,12 +54,34 @@
 		\expandafter\@pdr\expandafter#3% 再帰 \fiを正常に動かすためにexpandafterをつける
 	\fi
 }
+
+% version2
+\newcommand{\@derivative@lastarg@}{\hfuzz}
+\newcommand{\@derivative@lastarg@@}{0}
+% 一つずつ読み取っていく
+\NewDocumentCommand\@pdr@{m O{}}{%
+	\ifx#1\@pdr@end% 分子処理(最終)
+		\renewcommand{\@derivative@numerator}{\partial^{\@derivative@printTotalOrder} \@derivative@lastarg@}% 分子更新
+		%
+	\else% 分母処理
+		\expandafter\ifx\@derivative@lastarg@\hfuzz% lastarg@を先に展開し、その中身がhfuzzならば1つ目の引数処理
+		\else%
+			\expandafter\@derivative@addToTotalOrder\expandafter{\@derivative@lastarg@@}% 階数に足しこむ
+			\edef\@derivative@denominator{\@derivative@denominator \partial \@derivative@lastarg@^{\@derivative@lastarg@@}}% 分母更新
+		\fi%
+		\renewcommand{\@derivative@lastarg@}{#1}%
+		\renewcommand{\@derivative@lastarg@@}{#2}%
+		\expandafter\@pdr@% 再帰 \fiを正常に動かすためにexpandafterをつける
+	\fi
+}
+
+
 % 終了判定用
 \newcommand{\@pdr@end}{\@pdr@end@}
 
 \newcommand{\pdr}[1]{%
 	\@derivative@resetTotalOrder%
-	\@pdr#1\@pdr@end%
+	\@pdr@#1\@pdr@end%
 	\frac{\@derivative@numerator}{\@derivative@denominator}
 }
 
@@ -81,14 +105,19 @@
 	\odr{x}{f} \\
 	\odr{x}[2]{f} \\
 	\odr{x}[n]{f} \\
-	\odr{x_1}{f}
+	\odr{x_1}{f} \\
+	\odr{x_1}{y_2} \\
+	\odr{t}{\bm{u}}
 \end{align}
 
 \begin{align}
 	\pdr{{x}{f}} \\
 	\pdr{{x}[2]{f}} \\
 	\pdr{{x}{y}{f}} \\
-	\pdr{{x}[2]{y}{f}}
+	\pdr{{x}[2]{y}{f}} \\
+	\pdr{{x_1}{y}} \\
+	\pdr{{x}[2]{\bm{u}}} \\
+	\pdr{{x}{f_2}}
 \end{align}
 
 %
