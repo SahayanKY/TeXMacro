@@ -4,45 +4,72 @@
 
 \makeatletter
 
-%'[' を'{'相当に変える
-%\catcode91=1
-%
-%']' を'}'相当に変える
-%\catcode93=2
+\renewcommand{\d}{\textrm{d}}
 
-\newcounter{@derivative@totalOrder}
-
-\newcommand{\@derivative}[3]{%
-	\frac{#1^\the@derivative@totalOrder #3}{#1 #2^\the@derivative@totalOrder}
+% 常微分マクロ
+\NewDocumentCommand\odr{m O{} m}{%
+	\frac{%
+		\d^{#2} #3%
+	}{%
+		\d #1^{#2}%
+	}%
 }
+
+% 階数を計算するためのカウンタ
+\newcounter{@derivative@totalOrder}
+% 階数を計算
 \newcommand{\@derivative@addToTotalOrder}[1]{%
 	\ifx\hfuzz#1\hfuzz% 空の場合
-		\addtocounter{@derivative@totalOrder}{1}
+		\addtocounter{@derivative@totalOrder}{1}%
 	\else%
-		\addtocounter{@derivative@totalOrder}{#1}
+		\addtocounter{@derivative@totalOrder}{#1}%
 	\fi%
 }
-\NewDocumentCommand\testDrv{m m O{} m O{} m}{%
-	\setcounter{@derivative@totalOrder}{0}
-	\@derivative@addToTotalOrder{#3}
-	\@derivative@addToTotalOrder{#5}
-	\frac{
-		#1^{\the@derivative@totalOrder} #6
-	}{
-		#1 #2^{#3}
-		#1 #4^{#5}
-	}
+% 階数を表示
+\newcommand{\@derivative@printTotalOrder}{%
+	\ifnum\value{@derivative@totalOrder}=1% 階数が1の場合
+		% 空
+	\else%
+		\the@derivative@totalOrder% 階数を表示
+	\fi%
+}
+% 階数をリセット
+\newcommand{\@derivative@resetTotalOrder}{%
+	\setcounter{@derivative@totalOrder}{0}%
 }
 
-\newcommand{\odr}{%
-	\@derivative{\textrm{d}}%
+% https://zrbabbler.hatenablog.com/entry/20110903/1315024613
+% 偏微分の分母と分子を一時的に保存
+\newcommand{\@derivative@denominator}{\relax} % 分母
+\newcommand{\@derivative@numerator}{\relax} % 分子
+% 一つずつ読み取っていく
+\NewDocumentCommand\@pdr{m O{} m}{%
+	\ifx#3\@pdr@end% 分母処理(最終)
+		\renewcommand{\@derivative@numerator}{\partial^{\@derivative@printTotalOrder} #1}%
+	\else% 分子処理
+		\@derivative@addToTotalOrder{#2}% 階数に足しこむ
+		\expandafter\renewcommand\expandafter\@derivative@denominator\expandafter{\@derivative@denominator \partial #1^{#2}}% 分母更新
+		\expandafter\@pdr\expandafter#3% 再帰 \fiを正常に動かすためにexpandafterをつける
+	\fi
+}
+% 終了判定用
+\newcommand{\@pdr@end}{\@pdr@end@}
+
+\newcommand{\pdr}[1]{%
+	\@derivative@resetTotalOrder%
+	\@pdr#1\@pdr@end%
+	\frac{\@derivative@numerator}{\@derivative@denominator}
 }
 
-\newcommand{\pdr}{%
-	\@derivative{\partial}%
-}
+%TODO 階数に文字式が指定された場合は正常に動作しないはずなので修正
 
 \makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% physicsパッケージの偏微分マクロは$\displaystyle \frac{\partial^5 f}{\partial x^2 \partial y^3}$
+% のようなものに対応しておらず、
+% 使い勝手が微妙に悪いので、自作する
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \begin{document}
@@ -52,13 +79,26 @@
 
 \begin{align}
 	\odr{x}{f} \\
-	\pdr{x}{f}
+	\odr{x}[2]{f} \\
+	\odr{x}[n]{f} \\
+	\odr{x_1}{f}
 \end{align}
 
 \begin{align}
-	\testDrv{\partial}{x}{y}{f} \\
-	\testDrv{\partial}{x}{y}[2]{f} \\
+	\pdr{{x}{f}} \\
+	\pdr{{x}[2]{f}} \\
+	\pdr{{x}{y}{f}} \\
+	\pdr{{x}[2]{y}{f}}
 \end{align}
+
+%
+%\pdr{
+%	{x}{y}{f}
+%}
+%
+%\pdr{{x}{y}{f}}
+
+
 
 
 \end{document}
