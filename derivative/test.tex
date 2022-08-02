@@ -1,0 +1,64 @@
+\documentclass{jsarticle}
+\usepackage{amsmath}
+\usepackage{xparse}
+
+\makeatletter
+
+%'[' を'{'相当に変える
+%\catcode91=1
+%
+%']' を'}'相当に変える
+%\catcode93=2
+
+\newcounter{@derivative@totalOrder}
+
+\newcommand{\@derivative}[3]{%
+	\frac{#1^\the@derivative@totalOrder #3}{#1 #2^\the@derivative@totalOrder}
+}
+\newcommand{\@derivative@addToTotalOrder}[1]{%
+	\ifx\hfuzz#1\hfuzz% 空の場合
+		\addtocounter{@derivative@totalOrder}{1}
+	\else%
+		\addtocounter{@derivative@totalOrder}{#1}
+	\fi%
+}
+\NewDocumentCommand\testDrv{m m O{} m O{} m}{%
+	\setcounter{@derivative@totalOrder}{0}
+	\@derivative@addToTotalOrder{#3}
+	\@derivative@addToTotalOrder{#5}
+	\frac{
+		#1^{\the@derivative@totalOrder} #6
+	}{
+		#1 #2^{#3}
+		#1 #4^{#5}
+	}
+}
+
+\newcommand{\odr}{%
+	\@derivative{\textrm{d}}%
+}
+
+\newcommand{\pdr}{%
+	\@derivative{\partial}%
+}
+
+\makeatother
+
+
+\begin{document}
+\tracingonline=1
+\tracingmacros=1
+\tracingcommands=1
+
+\begin{align}
+	\odr{x}{f} \\
+	\pdr{x}{f}
+\end{align}
+
+\begin{align}
+	\testDrv{\partial}{x}{y}{f} \\
+	\testDrv{\partial}{x}{y}[2]{f} \\
+\end{align}
+
+
+\end{document}
