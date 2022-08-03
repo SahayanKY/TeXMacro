@@ -52,27 +52,29 @@
 		\@derivative@addToTotalOrder{#2}% 階数に足しこむ
 		\expandafter\renewcommand\expandafter\@derivative@denominator\expandafter{\@derivative@denominator \partial #1^{#2}}% 分母更新
 		\expandafter\@pdr\expandafter{\expandafter#3\expandafter}% 再帰 \fiを正常に動かすためにexpandafterをつける
-	\fi
+	\fi%
 }
 
 % version2
-\newcommand{\@derivative@lastarg@}{\hfuzz}
-\newcommand{\@derivative@lastarg@@}{0}
+\newcommand{\@derivative@lastarg@}{}
+\newcommand{\@derivative@lastarg@@}{}
+\newif\ifderivative@firstarg@
 % 一つずつ読み取っていく
 \NewDocumentCommand\@pdr@{m O{}}{%
 	\ifx#1\@pdr@end% 分子処理(最終)
 		\renewcommand{\@derivative@numerator}{\partial^{\@derivative@printTotalOrder} \@derivative@lastarg@}% 分子更新
 		%
 	\else% 分母処理
-		\expandafter\ifx\@derivative@lastarg@\hfuzz% lastarg@を先に展開し、その中身がhfuzzならば1つ目の引数処理
+		\ifderivative@firstarg@%
+			\derivative@firstarg@false%
 		\else%
 			\expandafter\@derivative@addToTotalOrder\expandafter{\@derivative@lastarg@@}% 階数に足しこむ
-			\edef\@derivative@denominator{\@derivative@denominator \partial \@derivative@lastarg@^{\@derivative@lastarg@@}}% 分母更新
+			\edef\@derivative@denominator{\@derivative@denominator \partial {\@derivative@lastarg@}^{\@derivative@lastarg@@}}% 分母更新
 		\fi%
 		\renewcommand{\@derivative@lastarg@}{#1}%
 		\renewcommand{\@derivative@lastarg@@}{#2}%
 		\expandafter\@pdr@% 再帰 \fiを正常に動かすためにexpandafterをつける
-	\fi
+	\fi%
 }
 
 
@@ -84,6 +86,7 @@
 	\ifnum#1=1%
 		\@pdr#2\@pdr@end%
 	\else%
+		\derivative@firstarg@true%
 		\@pdr@#2\@pdr@end%
 	\fi%
 	\frac{\@derivative@numerator}{\@derivative@denominator}%
@@ -118,32 +121,34 @@
 
 偏微分マクロ\verb|\pdr| version 1
 \begin{align}
-	\pdr{{x}{f}} \\ 				% pass
-	\pdr{{x}[2]{f}} \\ 				% pass
-	\pdr{{x}{y}{f}} \\ 				% pass
-	\pdr{{x}[2]{y}{f}} \\ 			% pass
-	\pdr{{x}[2]{y}[3]{f}} \\ 		% pass
-	\pdr{{x_1}{y}} \\ 				% pass
-%	\pdr{{x_1}{x_2}{f}} \\ 			% FAIL
-%	\pdr{{x}{f_2}} \\ 				% FAIL
-	\pdr{{\bm{x}}{f}} \\ 			% pass
-%	\pdr{{\bm{x}}{\bm{y}}{f}} \\ 	% FAIL
-%	\pdr{{x}[2]{\bm{u}}} \\ 		% FAIL
+1	&\	\pdr{{x}{f}} \\ 				% pass
+2	&\	\pdr{{x}[2]{f}} \\ 				% pass
+3	&\	\pdr{{x}{y}{f}} \\ 				% pass
+4	&\	\pdr{{x}[2]{y}{f}} \\ 			% pass
+5	&\	\pdr{{x}[2]{y}[3]{f}} \\ 		% pass
+6	&\	\pdr{{x_1}{y}} \\ 				% pass
+%7	&\	\pdr{{x}{f_2}} \\ 				% FAIL
+8	&\	\pdr{{x_1}{t}{f}} \\ 			% pass
+%9	&\	\pdr{{x_1}{x_2}{f}} \\ 			% FAIL
+10	&\	\pdr{{\bm{x}}{f}} \\ 			% pass
+%11	&\	\pdr{{\bm{x}}{\bm{y}}{f}} \\ 	% FAIL
+%12	&\	\pdr{{x}[2]{\bm{u}}} \\ 		% FAIL
 \end{align}
 
 偏微分マクロ\verb|\pdr| version 2
 \begin{align}
-	\pdr[2]{{x}{f}} \\ 				% pass
-	\pdr[2]{{x}[2]{f}} \\ 			% pass
-	\pdr[2]{{x}{y}{f}} \\ 			% pass
-	\pdr[2]{{x}[2]{y}{f}} \\ 		% pass
-	\pdr[2]{{x}[2]{y}[3]{f}} \\ 	% pass
-	\pdr[2]{{x_1}{y}} \\ 			% pass
-	\pdr[2]{{x_1}{x_2}{f}} \\ 		% pass
-	\pdr[2]{{x}{f_2}} \\ 			% pass
-%	\pdr[2]{{\bm{x}}{f}} \\ 		% FAIL
-%	\pdr[2]{{\bm{x}}{\bm{y}}{f}} \\ % FAIL
-	\pdr[2]{{x}[2]{\bm{u}}} \\ 		% pass
+1	&\	\pdr[2]{{x}{f}} \\ 				% pass
+2	&\	\pdr[2]{{x}[2]{f}} \\ 			% pass
+3	&\	\pdr[2]{{x}{y}{f}} \\ 			% pass
+4	&\	\pdr[2]{{x}[2]{y}{f}} \\ 		% pass
+5	&\	\pdr[2]{{x}[2]{y}[3]{f}} \\ 	% pass
+6	&\	\pdr[2]{{x_1}{y}} \\ 			% pass
+7	&\	\pdr[2]{{x}{f_2}} \\ 			% pass
+8	&\	\pdr[2]{{x_1}{t}{f}} \\			% pass
+9	&\	\pdr[2]{{x_1}{x_2}{f}} \\ 		% pass
+%10	&\	\pdr[2]{{\bm{x}}{f}} \\ 		% FAIL
+%11	&\	\pdr[2]{{\bm{x}}{\bm{y}}{f}} \\ % FAIL
+12	&\	\pdr[2]{{x}[2]{\bm{u}}} \\ 		% pass
 \end{align}
 
 
