@@ -130,6 +130,7 @@
 }
 
 %TODO 階数に文字式が指定された場合は正常に動作しないはずなので修正
+%-> test2.texにて対処
 
 \makeatother
 
@@ -169,9 +170,9 @@
 9		&\	\pdr{{x_1}{x_2}{f}} \\ 			% pass
 10		&\	\pdr{{\bm{x}}{f}} \\ 			% pass
 11		&\	\pdr{{\bm{x}}{\bm{y}}{f}} \\ 	% pass
-12		&\	\pdr[2]{{\bm{x}_1}{\bm{y}_2}{f}} \\ %
+12		&\	\pdr{{\bm{x}_1}{\bm{y}_2}{f}} \\% pass
 13		&\	\pdr{{x}[2]{\bm{u}}} \\ 		% pass
-14		&\	\pdr{{x}{\bm{u}}} + \pdr{{y}{\bm{u}}} \\ %
+14		&\	\pdr{{x}{\bm{u}}} + \pdr{{y}{\bm{u}}} \\ % pass
 15		&\	\pdr{{x}{}} \\					% pass
 16		&\	\pdr{{x_1}{}} \\				% pass
 17		&\	\pdr{{\bm{x}}{}} \\				% pass
