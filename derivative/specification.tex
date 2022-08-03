@@ -12,7 +12,18 @@
 \begin{tabular}{ccc}
 1&	\verb|\odr{x}{f}|				& $\displaystyle \frac{\d f}{\d x}$ \\[3mm]
 2&	\verb|\odr{x}[2]{f}|			& $\displaystyle \frac{\d^2 f}{\d x^2}$ \\[3mm]
-\hline
+3&	\verb|\odr{x}[n]{f}|			& $\displaystyle \frac{\d^n f}{\d x^n}$ \\[3mm]
+4&	\verb|\odr{x_1}{f}|				& $\displaystyle \frac{\d f}{\d x_1}$ \\[3mm]
+5&	\verb|\odr{x_1}{y_2}|			& $\displaystyle \frac{\d y_2}{\d x_1}$ \\[3mm]
+6&	\verb|\odr{t}{\bm{u}}|			& $\displaystyle \frac{\d\bm{u}}{\d t}$ \\[3mm]
+7&	\verb|\odr{\bm{x}}{f}|			& $\displaystyle \frac{\d f}{\d\bm{x}}$ \\[3mm]
+\end{tabular}
+\end{table}
+%
+%表を挿入
+\begin{table}[htpt]
+\centering
+\begin{tabular}{ccc}
 1&	\verb|\pdr{{x}{f}}|					& $\displaystyle \frac{\partial f}{\partial x}$ \\[3mm]
 2&	\verb|\pdr{{x}[2]{f}}|				& $\displaystyle \frac{\partial^2 f}{\partial x^2}$ \\[3mm]
 3&	\verb|\pdr{{x}{y}{f}}|				& $\displaystyle \frac{\partial^2 f}{\partial x \partial y}$ \\[3mm]
@@ -32,5 +43,30 @@
 17&	\verb|\pdr{{\bm{x}}{}}|				& $\displaystyle \frac{\partial}{\partial \bm{x}}$ \\[3mm]
 \end{tabular}
 \end{table}
+%
+%表を挿入
+\begin{table}[htpt]
+\centering
+\begin{tabular}{ccc}
+1& \verb|\pdr*{{x}[n]{f}[n]}|			& $\displaystyle \frac{\partial^n f}{\partial x^n}$ \\[3mm]
+2& \verb|\pdr*{{x}[n]{}[n]}|			& $\displaystyle \frac{\partial^n}{\partial x^n}$ \\[3mm]
+3& \verb|\pdr*{{x}[n]{y}[m]{f}[n+m]}|	& $\displaystyle \frac{\partial^{n+m} f}{\partial x^n \partial y^m}$ \\[3mm]
+4& \verb|\pdr*{{x}[1]{y}[1]{f}[1+1]}|	& $\displaystyle \frac{\partial^{1+1} f}{\partial x^1 \partial y^1}$ \\[3mm]
+5& \verb|\pdr*{{x}{y}[n]{f}[n+1]}|		& $\displaystyle \frac{\partial^{n+1} f}{\partial x \partial y^n}$ \\[3mm]
+\end{tabular}
+\end{table}
+%
+%表を挿入
+\begin{table}[htpt]
+\centering
+\begin{tabular}{ccc}
+1& \verb|\pdrr{{x}{f}}|					& $\displaystyle \partial_{x} f$ \\[3mm]
+2& \verb|\pdrr{{i}{j}{f}}|				& $\displaystyle \partial_{i}\partial_{j} f$ \\[3mm]
+3& \verb|\pdrr{{i}*{j}{f}}|				& $\displaystyle \partial_{i}\partial^{j} f$ \\[3mm]
+4& \verb|\pdrr{*{i}{j}{f}}|				& $\displaystyle \partial^{i}\partial_{j} f$ \\[3mm]
+\end{tabular}
+\end{table}
+
+
 
 \end{document}
