@@ -69,7 +69,20 @@
 			\derivative@firstarg@false%
 		\else%
 			\expandafter\@derivative@addToTotalOrder\expandafter{\@derivative@lastarg@@}% 階数に足しこむ
-			\edef\@derivative@denominator{\@derivative@denominator \partial {\@derivative@lastarg@}^{\@derivative@lastarg@@}}% 分母更新
+			\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\renewcommand% 分母更新
+			\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\@derivative@denominator%
+			\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter{%
+			\expandafter\expandafter\expandafter\@derivative@denominator%
+			\expandafter\expandafter\expandafter\partial%
+			\expandafter\expandafter\expandafter{%
+			\expandafter\@derivative@lastarg@%
+			\expandafter}%
+			\expandafter^%
+			\expandafter{%
+			\@derivative@lastarg@@%
+			}}%
+			%\edefでは展開しすぎなのでexpandafterで調整する
+			%\edef\@derivative@denominator{\@derivative@denominator \partial {\@derivative@lastarg@}^{\@derivative@lastarg@@}}
 		\fi%
 		\renewcommand{\@derivative@lastarg@}{#1}%
 		\renewcommand{\@derivative@lastarg@@}{#2}%
@@ -132,7 +145,8 @@
 %9	&\	\pdr{{x_1}{x_2}{f}} \\ 			% FAIL
 10	&\	\pdr{{\bm{x}}{f}} \\ 			% pass
 %11	&\	\pdr{{\bm{x}}{\bm{y}}{f}} \\ 	% FAIL
-%12	&\	\pdr{{x}[2]{\bm{u}}} \\ 		% FAIL
+%12	&\	\pdr[2]{{\bm{x}_1}{\bm{y}_2}{f}} \\ %
+%13	&\	\pdr{{x}[2]{\bm{u}}} \\ 		% FAIL
 \end{align}
 
 偏微分マクロ\verb|\pdr| version 2
@@ -146,12 +160,11 @@
 7	&\	\pdr[2]{{x}{f_2}} \\ 			% pass
 8	&\	\pdr[2]{{x_1}{t}{f}} \\			% pass
 9	&\	\pdr[2]{{x_1}{x_2}{f}} \\ 		% pass
-%10	&\	\pdr[2]{{\bm{x}}{f}} \\ 		% FAIL
-%11	&\	\pdr[2]{{\bm{x}}{\bm{y}}{f}} \\ % FAIL
-12	&\	\pdr[2]{{x}[2]{\bm{u}}} \\ 		% pass
+10	&\	\pdr[2]{{\bm{x}}{f}} \\ 		% pass
+11	&\	\pdr[2]{{\bm{x}}{\bm{y}}{f}} \\ % pass
+12	&\	\pdr[2]{{\bm{x}_1}{\bm{y}_2}{f}} \\ % pass
+13	&\	\pdr[2]{{x}[2]{\bm{u}}} \\ 		% pass
 \end{align}
-
-
 
 %
 %\pdr{
