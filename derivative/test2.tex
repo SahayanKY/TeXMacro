@@ -1,0 +1,165 @@
+\documentclass{jsarticle}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{xparse}
+
+\makeatletter
+
+\renewcommand{\d}{\textrm{d}}
+
+% 常微分マクロ
+\NewDocumentCommand\odr{m O{} m}{%
+	\frac{%
+		\d^{#2} #3%
+	}{%
+		\d #1^{#2}%
+	}%
+}
+
+% 階数を計算するためのカウンタ
+\newcounter{@derivative@totalOrder}
+% 階数を計算するかどうか
+\newif\if@derivative@calcOrder@
+% 階数を計算
+\newcommand{\@derivative@addToTotalOrder}[1]{%
+	\ifx\hfuzz#1\hfuzz% 空の場合
+		\addtocounter{@derivative@totalOrder}{1}%
+	\else%
+		\addtocounter{@derivative@totalOrder}{#1}%
+	\fi%
+}
+% 階数を表示
+\newcommand{\@derivative@printTotalOrder}{%
+	\ifnum\value{@derivative@totalOrder}=1% 階数が1の場合
+		% 空
+	\else%
+		\the@derivative@totalOrder% 階数を表示
+	\fi%
+}
+% 内部変数をリセット
+\newcommand{\@derivative@resetInnerVar}{%
+	\setcounter{@derivative@totalOrder}{0}%
+	%
+	% 偏微分の分母と分子を一時的に保存
+	\def\@derivative@denominator{}% 分母
+	\def\@derivative@numerator{}% 分子
+	%
+	\def\@derivative@arg@@@{}%
+}
+
+% version1
+% https://zrbabbler.hatenablog.com/entry/20110903/1315024613
+% 一つずつ読み取っていく
+\NewDocumentCommand\@pdr{m O{} m}{%
+	\renewcommand{\@derivative@arg@@@}{#3}%
+	\ifx#3\@pdr@end% 分母処理(最終)
+		\renewcommand{\@derivative@numerator}{%
+			\partial^{%
+ 				\if@derivative@calcOrder@%
+ 					\@derivative@printTotalOrder%
+ 				\else%
+ 					#2%
+ 				\fi%
+			} #1%
+		}%
+	\else% 分子処理
+		\if@derivative@calcOrder@%
+			\@derivative@addToTotalOrder{#2}% 階数に足しこむ
+		\fi%
+		%
+		\expandafter\renewcommand% 分母更新
+		\expandafter\@derivative@denominator%
+		\expandafter{%
+			\@derivative@denominator \partial #1^{#2}%
+		}%
+		%
+		\expandafter\expandafter\expandafter\@pdr% 再帰 \fiを正常に動かすためにexpandafterをつける
+		\expandafter\expandafter\expandafter{%
+		\expandafter\@derivative@arg@@@%
+		\expandafter}%
+	\fi%
+}
+
+% 終了判定用
+\newcommand{\@pdr@end}{\@pdr@end@}
+
+\NewDocumentCommand{\pdr}{s m}{%
+	\@derivative@resetInnerVar% 内部変数の初期化
+	\IfBooleanTF{#1}{%
+		% starが指定された場合階数計算をしない
+		\@derivative@calcOrder@false%
+	}{%
+		\@derivative@calcOrder@true%
+	}%
+	\@pdr#2\@pdr@end%
+	\frac{\@derivative@numerator}{\@derivative@denominator}%
+}
+
+
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% physicsパッケージの偏微分マクロは$\displaystyle \frac{\partial^5 f}{\partial x^2 \partial y^3}$
+% のようなものに対応しておらず、
+% 使い勝手が微妙に悪いので、自作する
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% test.texにて凡そ実装の方向性が固まった(version1を採用)ので、
+% そこからブラッシュアップ
+%
+
+
+\begin{document}
+\tracingonline=1
+\tracingmacros=1
+\tracingcommands=1
+
+常微分マクロ\verb|\odr|
+\begin{align}
+	\odr{x}{f} \\
+	\odr{x}[2]{f} \\
+	\odr{x}[n]{f} \\
+	\odr{x_1}{f} \\
+	\odr{x_1}{y_2} \\
+	\odr{t}{\bm{u}} \\
+	\odr{\bm{x}}{f}
+\end{align}
+
+偏微分マクロ\verb|\pdr| version 1
+\begin{align}
+1		&\	\pdr{{x}{f}} \\ 				% pass
+2		&\	\pdr{{x}[2]{f}} \\ 				% pass
+3		&\	\pdr{{x}{y}{f}} \\ 				% pass
+4		&\	\pdr{{x}[2]{y}{f}} \\ 			% pass
+5		&\	\pdr{{x}[2]{y}[3]{f}} \\ 		% pass
+6		&\	\pdr{{x_1}{y}} \\ 				% pass
+7		&\	\pdr{{x}{f_2}} \\ 				% pass
+8		&\	\pdr{{x_1}{t}{f}} \\ 			% pass
+9		&\	\pdr{{x_1}{x_2}{f}} \\ 			% pass
+10		&\	\pdr{{\bm{x}}{f}} \\ 			% pass
+11		&\	\pdr{{\bm{x}}{\bm{y}}{f}} \\ 	% pass
+12		&\	\pdr{{\bm{x}_1}{\bm{y}_2}{f}} \\ %
+13		&\	\pdr{{x}[2]{\bm{u}}} \\ 		% pass
+14		&\	\pdr{{x}{\bm{u}}} + \pdr{{y}{\bm{u}}} \\ %
+15		&\	\pdr{{x}{}} \\					% pass
+16		&\	\pdr{{x_1}{}} \\				% pass
+17		&\	\pdr{{\bm{x}}{}} \\				% pass
+\end{align}
+
+\begin{align}
+1		&\	\pdr*{{x}[n]{f}[n]} \\			% pass
+2		&\	\pdr*{{x}[n]{}[n]} \\			% pass
+3		&\	\pdr*{{x}[n]{y}[m]{f}[n+m]} \\	% pass
+4		&\	\pdr*{{x}[1]{y}[1]{f}[1+1]} \\	% pass
+5		&\ 	\pdr*{{x}{y}[n]{f}[n+1]} \\		% pass
+\end{align}
+%
+%\pdr{
+%	{x}{y}{f}
+%}
+%
+%\pdr{{x}{y}{f}}
+
+
+
+
+\end{document}
