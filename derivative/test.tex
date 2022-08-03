@@ -45,6 +45,8 @@
 	\renewcommand{\@derivative@lastarg@@}{}%
 	%
 	\derivative@firstarg@true%
+	%
+	\renewcommand{\@derivative@arg@@@}{}%
 }
 
 % version1
@@ -52,14 +54,16 @@
 % 偏微分の分母と分子を一時的に保存
 \newcommand{\@derivative@denominator}{\relax} % 分母
 \newcommand{\@derivative@numerator}{\relax} % 分子
+\newcommand{\@derivative@arg@@@}{}
 % 一つずつ読み取っていく
 \NewDocumentCommand\@pdr{m O{} m}{%
+	\renewcommand{\@derivative@arg@@@}{#3}%
 	\ifx#3\@pdr@end% 分母処理(最終)
 		\renewcommand{\@derivative@numerator}{\partial^{\@derivative@printTotalOrder} #1}%
 	\else% 分子処理
 		\@derivative@addToTotalOrder{#2}% 階数に足しこむ
 		\expandafter\renewcommand\expandafter\@derivative@denominator\expandafter{\@derivative@denominator \partial #1^{#2}}% 分母更新
-		\expandafter\@pdr\expandafter{\expandafter#3\expandafter}% 再帰 \fiを正常に動かすためにexpandafterをつける
+		\expandafter\expandafter\expandafter\@pdr\expandafter\expandafter\expandafter{\expandafter\@derivative@arg@@@\expandafter}% 再帰 \fiを正常に動かすためにexpandafterをつける
 	\fi%
 }
 
@@ -151,17 +155,17 @@
 4		&\	\pdr{{x}[2]{y}{f}} \\ 			% pass
 5		&\	\pdr{{x}[2]{y}[3]{f}} \\ 		% pass
 6		&\	\pdr{{x_1}{y}} \\ 				% pass
-7\\%	&\	\pdr{{x}{f_2}} \\ 				% FAIL
+7		&\	\pdr{{x}{f_2}} \\ 				% pass
 8		&\	\pdr{{x_1}{t}{f}} \\ 			% pass
-9\\%	&\	\pdr{{x_1}{x_2}{f}} \\ 			% FAIL
+9		&\	\pdr{{x_1}{x_2}{f}} \\ 			% pass
 10		&\	\pdr{{\bm{x}}{f}} \\ 			% pass
-11\\%	&\	\pdr{{\bm{x}}{\bm{y}}{f}} \\ 	% FAIL
-12\\%	&\	\pdr[2]{{\bm{x}_1}{\bm{y}_2}{f}} \\ %
-13\\%	&\	\pdr{{x}[2]{\bm{u}}} \\ 		% FAIL
-14\\%	&\	\pdr{{x}{\bm{u}}} + \pdr{{y}{\bm{u}}} \\ %
-15\\%	&\	\pdr{{x}{}} \\					% FAIL
-16\\%	&\	\pdr{{x_1}{}} \\				% FAIL
-17\\%	&\	\pdr{{\bm{x}}{}} \\				% FAIL
+11		&\	\pdr{{\bm{x}}{\bm{y}}{f}} \\ 	% pass
+12		&\	\pdr[2]{{\bm{x}_1}{\bm{y}_2}{f}} \\ %
+13		&\	\pdr{{x}[2]{\bm{u}}} \\ 		% pass
+14		&\	\pdr{{x}{\bm{u}}} + \pdr{{y}{\bm{u}}} \\ %
+15		&\	\pdr{{x}{}} \\					% pass
+16		&\	\pdr{{x_1}{}} \\				% pass
+17		&\	\pdr{{\bm{x}}{}} \\				% pass
 \end{align}
 
 偏微分マクロ\verb|\pdr| version 2
