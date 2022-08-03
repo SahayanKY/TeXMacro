@@ -1,5 +1,6 @@
 \documentclass{jsarticle}
 \usepackage{amsmath}
+\usepackage{bm}
 
 \renewcommand{\d}{\textrm{d}}
 
@@ -8,14 +9,27 @@
 %表を挿入
 \begin{table}[htpt]
 \centering
-\begin{tabular}{cc}
-	\verb|\odr{x}{f}|				& $\displaystyle \frac{\d f}{\d x}$ \\[3mm]
-	\verb|\odr{x}[2]{f}|			& $\displaystyle \frac{\d^2 f}{\d x^2}$ \\[3mm]
-	\verb|\pdr{{x}{f}}|				& $\displaystyle \frac{\partial f}{\partial x}$ \\[3mm]
-	\verb|\pdr{{x}[2]{f}}|			& $\displaystyle \frac{\partial^2 f}{\partial x^2}$ \\[3mm]
-	\verb|\pdr{{x}{y}{f}}|			& $\displaystyle \frac{\partial^2 f}{\partial x \partial y}$ \\[3mm]
-	\verb|\pdr{{x}[2]{y}{f}}|		& $\displaystyle \frac{\partial^2 f}{\partial x^2 \partial y}$ \\[3mm]
-	\verb|\pdr{{x}[2]{y}[3]{f}}|	& $\displaystyle \frac{\partial^5 f}{\partial x^2 \partial y^3}$ \\[3mm]
+\begin{tabular}{ccc}
+1&	\verb|\odr{x}{f}|				& $\displaystyle \frac{\d f}{\d x}$ \\[3mm]
+2&	\verb|\odr{x}[2]{f}|			& $\displaystyle \frac{\d^2 f}{\d x^2}$ \\[3mm]
+\hline
+1&	\verb|\pdr{{x}{f}}|					& $\displaystyle \frac{\partial f}{\partial x}$ \\[3mm]
+2&	\verb|\pdr{{x}[2]{f}}|				& $\displaystyle \frac{\partial^2 f}{\partial x^2}$ \\[3mm]
+3&	\verb|\pdr{{x}{y}{f}}|				& $\displaystyle \frac{\partial^2 f}{\partial x \partial y}$ \\[3mm]
+4&	\verb|\pdr{{x}[2]{y}{f}}|			& $\displaystyle \frac{\partial^3 f}{\partial x^2 \partial y}$ \\[3mm]
+5&	\verb|\pdr{{x}[2]{y}[3]{f}}|		& $\displaystyle \frac{\partial^5 f}{\partial x^2 \partial y^3}$ \\[3mm]
+6&	\verb|\pdr{{x_1}{y}}|				& $\displaystyle \frac{\partial y}{\partial x_1}$ \\[3mm]
+7&	\verb|\pdr{{x}{f_2}}|				& $\displaystyle \frac{\partial f_2}{\partial x}$ \\[3mm]
+8&	\verb|\pdr{{x_1}{t}{f}}|			& $\displaystyle \frac{\partial^2 f}{\partial x_1 \partial t}$ \\[3mm]
+9&	\verb|\pdr{{x_1}{x_2}{f}}|			& $\displaystyle \frac{\partial^2 f}{\partial x_1 \partial x_2}$ \\[3mm]
+10&	\verb|\pdr{{\bm{x}}{f}}|			& $\displaystyle \frac{\partial f}{\partial \bm{x}}$ \\[3mm]
+11&	\verb|\pdr{{\bm{x}}{\bm{y}}{f}}|	& $\displaystyle \frac{\partial^2 f}{\partial \bm{x} \partial \bm{y}}$ \\[3mm]
+12&	\verb|\pdr{{\bm{x}_1}{\bm{y}_2}{f}}|& $\displaystyle \frac{\partial^2 f}{\partial \bm{x}_1 \partial \bm{y}_2}$ \\[3mm]
+13&	\verb|\pdr{{x}[2]{\bm{u}}}|			& $\displaystyle \frac{\partial^2 \bm{u}}{\partial x^2}$ \\[3mm]
+14&	\verb|\pdr{{x}{\bm{u}}}+\pdr{{y}{\bm{u}}}| & $\displaystyle \frac{\partial \bm{u}}{\partial x} + \frac{\partial \bm{u}}{\partial y}$ \\[3mm]
+15&	\verb|\pdr{{x}{}}| 					& $\displaystyle \frac{\partial}{\partial x}$ \\[3mm]
+16&	\verb|\pdr{{x_1}{}}|				& $\displaystyle \frac{\partial}{\partial x_1}$ \\[3mm]
+17&	\verb|\pdr{{\bm{x}}{}}|				& $\displaystyle \frac{\partial}{\partial \bm{x}}$ \\[3mm]
 \end{tabular}
 \end{table}
 
