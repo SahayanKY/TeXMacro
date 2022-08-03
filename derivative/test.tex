@@ -51,7 +51,7 @@
 	\else% 分子処理
 		\@derivative@addToTotalOrder{#2}% 階数に足しこむ
 		\expandafter\renewcommand\expandafter\@derivative@denominator\expandafter{\@derivative@denominator \partial #1^{#2}}% 分母更新
-		\expandafter\@pdr\expandafter#3% 再帰 \fiを正常に動かすためにexpandafterをつける
+		\expandafter\@pdr\expandafter{\expandafter#3\expandafter}% 再帰 \fiを正常に動かすためにexpandafterをつける
 	\fi
 }
 
@@ -79,10 +79,14 @@
 % 終了判定用
 \newcommand{\@pdr@end}{\@pdr@end@}
 
-\newcommand{\pdr}[1]{%
+\newcommand{\pdr}[2][1]{%
 	\@derivative@resetTotalOrder%
-	\@pdr@#1\@pdr@end%
-	\frac{\@derivative@numerator}{\@derivative@denominator}
+	\ifnum#1=1%
+		\@pdr#2\@pdr@end%
+	\else%
+		\@pdr@#2\@pdr@end%
+	\fi%
+	\frac{\@derivative@numerator}{\@derivative@denominator}%
 }
 
 %TODO 階数に文字式が指定された場合は正常に動作しないはずなので修正
@@ -101,24 +105,48 @@
 \tracingmacros=1
 \tracingcommands=1
 
+常微分マクロ\verb|\odr|
 \begin{align}
 	\odr{x}{f} \\
 	\odr{x}[2]{f} \\
 	\odr{x}[n]{f} \\
 	\odr{x_1}{f} \\
 	\odr{x_1}{y_2} \\
-	\odr{t}{\bm{u}}
+	\odr{t}{\bm{u}} \\
+	\odr{\bm{x}}{f}
 \end{align}
 
+偏微分マクロ\verb|\pdr| version 1
 \begin{align}
-	\pdr{{x}{f}} \\
-	\pdr{{x}[2]{f}} \\
-	\pdr{{x}{y}{f}} \\
-	\pdr{{x}[2]{y}{f}} \\
-	\pdr{{x_1}{y}} \\
-	\pdr{{x}[2]{\bm{u}}} \\
-	\pdr{{x}{f_2}}
+	\pdr{{x}{f}} \\ 				% pass
+	\pdr{{x}[2]{f}} \\ 				% pass
+	\pdr{{x}{y}{f}} \\ 				% pass
+	\pdr{{x}[2]{y}{f}} \\ 			% pass
+	\pdr{{x}[2]{y}[3]{f}} \\ 		% pass
+	\pdr{{x_1}{y}} \\ 				% pass
+%	\pdr{{x_1}{x_2}{f}} \\ 			% FAIL
+%	\pdr{{x}{f_2}} \\ 				% FAIL
+	\pdr{{\bm{x}}{f}} \\ 			% pass
+%	\pdr{{\bm{x}}{\bm{y}}{f}} \\ 	% FAIL
+%	\pdr{{x}[2]{\bm{u}}} \\ 		% FAIL
 \end{align}
+
+偏微分マクロ\verb|\pdr| version 2
+\begin{align}
+	\pdr[2]{{x}{f}} \\ 				% pass
+	\pdr[2]{{x}[2]{f}} \\ 			% pass
+	\pdr[2]{{x}{y}{f}} \\ 			% pass
+	\pdr[2]{{x}[2]{y}{f}} \\ 		% pass
+	\pdr[2]{{x}[2]{y}[3]{f}} \\ 	% pass
+	\pdr[2]{{x_1}{y}} \\ 			% pass
+	\pdr[2]{{x_1}{x_2}{f}} \\ 		% pass
+	\pdr[2]{{x}{f_2}} \\ 			% pass
+%	\pdr[2]{{\bm{x}}{f}} \\ 		% FAIL
+%	\pdr[2]{{\bm{x}}{\bm{y}}{f}} \\ % FAIL
+	\pdr[2]{{x}[2]{\bm{u}}} \\ 		% pass
+\end{align}
+
+
 
 %
 %\pdr{
