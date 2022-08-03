@@ -34,9 +34,17 @@
 		\the@derivative@totalOrder% 階数を表示
 	\fi%
 }
-% 階数をリセット
-\newcommand{\@derivative@resetTotalOrder}{%
+% 内部変数をリセット
+\newcommand{\@derivative@resetInnerVar}{%
 	\setcounter{@derivative@totalOrder}{0}%
+	%
+	\renewcommand{\@derivative@denominator}{}% 分母
+	\renewcommand{\@derivative@numerator}{}% 分子
+	%
+	\renewcommand{\@derivative@lastarg@}{}%
+	\renewcommand{\@derivative@lastarg@@}{}%
+	%
+	\derivative@firstarg@true%
 }
 
 % version1
@@ -81,8 +89,12 @@
 			\expandafter{%
 			\@derivative@lastarg@@%
 			}}%
-			%\edefでは展開しすぎなのでexpandafterで調整する
 			%\edef\@derivative@denominator{\@derivative@denominator \partial {\@derivative@lastarg@}^{\@derivative@lastarg@@}}
+			%\edefでは展開しすぎなのでexpandafterで調整する
+			%\e\e\e\e\e\e\e\A\e\e\e\e\e\e\e\B\e\e\e\X\e\e\e\C\e\Y\e\D\Z\E
+			%\e\e\e\A\e\e\e\B\e\X\e\C\Y\D\Z'\E
+			%\e\A\e\B\X\C\Y'\D\Z'\E
+			%\A\B\X'\C\Y'\D\Z'\E
 		\fi%
 		\renewcommand{\@derivative@lastarg@}{#1}%
 		\renewcommand{\@derivative@lastarg@@}{#2}%
@@ -95,11 +107,10 @@
 \newcommand{\@pdr@end}{\@pdr@end@}
 
 \newcommand{\pdr}[2][1]{%
-	\@derivative@resetTotalOrder%
+	\@derivative@resetInnerVar% 内部変数の初期化
 	\ifnum#1=1%
 		\@pdr#2\@pdr@end%
 	\else%
-		\derivative@firstarg@true%
 		\@pdr@#2\@pdr@end%
 	\fi%
 	\frac{\@derivative@numerator}{\@derivative@denominator}%
@@ -134,36 +145,44 @@
 
 偏微分マクロ\verb|\pdr| version 1
 \begin{align}
-1	&\	\pdr{{x}{f}} \\ 				% pass
-2	&\	\pdr{{x}[2]{f}} \\ 				% pass
-3	&\	\pdr{{x}{y}{f}} \\ 				% pass
-4	&\	\pdr{{x}[2]{y}{f}} \\ 			% pass
-5	&\	\pdr{{x}[2]{y}[3]{f}} \\ 		% pass
-6	&\	\pdr{{x_1}{y}} \\ 				% pass
-%7	&\	\pdr{{x}{f_2}} \\ 				% FAIL
-8	&\	\pdr{{x_1}{t}{f}} \\ 			% pass
-%9	&\	\pdr{{x_1}{x_2}{f}} \\ 			% FAIL
-10	&\	\pdr{{\bm{x}}{f}} \\ 			% pass
-%11	&\	\pdr{{\bm{x}}{\bm{y}}{f}} \\ 	% FAIL
-%12	&\	\pdr[2]{{\bm{x}_1}{\bm{y}_2}{f}} \\ %
-%13	&\	\pdr{{x}[2]{\bm{u}}} \\ 		% FAIL
+1		&\	\pdr{{x}{f}} \\ 				% pass
+2		&\	\pdr{{x}[2]{f}} \\ 				% pass
+3		&\	\pdr{{x}{y}{f}} \\ 				% pass
+4		&\	\pdr{{x}[2]{y}{f}} \\ 			% pass
+5		&\	\pdr{{x}[2]{y}[3]{f}} \\ 		% pass
+6		&\	\pdr{{x_1}{y}} \\ 				% pass
+7\\%	&\	\pdr{{x}{f_2}} \\ 				% FAIL
+8		&\	\pdr{{x_1}{t}{f}} \\ 			% pass
+9\\%	&\	\pdr{{x_1}{x_2}{f}} \\ 			% FAIL
+10		&\	\pdr{{\bm{x}}{f}} \\ 			% pass
+11\\%	&\	\pdr{{\bm{x}}{\bm{y}}{f}} \\ 	% FAIL
+12\\%	&\	\pdr[2]{{\bm{x}_1}{\bm{y}_2}{f}} \\ %
+13\\%	&\	\pdr{{x}[2]{\bm{u}}} \\ 		% FAIL
+14\\%	&\	\pdr{{x}{\bm{u}}} + \pdr{{y}{\bm{u}}} \\ %
+15\\%	&\	\pdr{{x}{}} \\					% FAIL
+16\\%	&\	\pdr{{x_1}{}} \\				% FAIL
+17\\%	&\	\pdr{{\bm{x}}{}} \\				% FAIL
 \end{align}
 
 偏微分マクロ\verb|\pdr| version 2
 \begin{align}
-1	&\	\pdr[2]{{x}{f}} \\ 				% pass
-2	&\	\pdr[2]{{x}[2]{f}} \\ 			% pass
-3	&\	\pdr[2]{{x}{y}{f}} \\ 			% pass
-4	&\	\pdr[2]{{x}[2]{y}{f}} \\ 		% pass
-5	&\	\pdr[2]{{x}[2]{y}[3]{f}} \\ 	% pass
-6	&\	\pdr[2]{{x_1}{y}} \\ 			% pass
-7	&\	\pdr[2]{{x}{f_2}} \\ 			% pass
-8	&\	\pdr[2]{{x_1}{t}{f}} \\			% pass
-9	&\	\pdr[2]{{x_1}{x_2}{f}} \\ 		% pass
-10	&\	\pdr[2]{{\bm{x}}{f}} \\ 		% pass
-11	&\	\pdr[2]{{\bm{x}}{\bm{y}}{f}} \\ % pass
-12	&\	\pdr[2]{{\bm{x}_1}{\bm{y}_2}{f}} \\ % pass
-13	&\	\pdr[2]{{x}[2]{\bm{u}}} \\ 		% pass
+1		&\	\pdr[2]{{x}{f}} \\ 				% pass
+2		&\	\pdr[2]{{x}[2]{f}} \\ 			% pass
+3		&\	\pdr[2]{{x}{y}{f}} \\ 			% pass
+4		&\	\pdr[2]{{x}[2]{y}{f}} \\ 		% pass
+5		&\	\pdr[2]{{x}[2]{y}[3]{f}} \\ 	% pass
+6		&\	\pdr[2]{{x_1}{y}} \\ 			% pass
+7		&\	\pdr[2]{{x}{f_2}} \\ 			% pass
+8		&\	\pdr[2]{{x_1}{t}{f}} \\			% pass
+9		&\	\pdr[2]{{x_1}{x_2}{f}} \\ 		% pass
+10		&\	\pdr[2]{{\bm{x}}{f}} \\ 		% pass
+11		&\	\pdr[2]{{\bm{x}}{\bm{y}}{f}} \\ % pass
+12		&\	\pdr[2]{{\bm{x}_1}{\bm{y}_2}{f}} \\ % pass
+13		&\	\pdr[2]{{x}[2]{\bm{u}}} \\ 		% pass
+14		&\	\pdr[2]{{x}{\bm{u}}} + \pdr[2]{{y}{\bm{u}}} \\ % pass
+15		&\	\pdr[2]{{x}{}} \\				% pass
+16		&\	\pdr[2]{{x_1}{}} \\				% pass
+17		&\	\pdr[2]{{\bm{x}}{}} \\			% pass
 \end{align}
 
 %
