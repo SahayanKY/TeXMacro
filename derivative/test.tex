@@ -62,8 +62,17 @@
 		\renewcommand{\@derivative@numerator}{\partial^{\@derivative@printTotalOrder} #1}%
 	\else% 分子処理
 		\@derivative@addToTotalOrder{#2}% 階数に足しこむ
-		\expandafter\renewcommand\expandafter\@derivative@denominator\expandafter{\@derivative@denominator \partial #1^{#2}}% 分母更新
-		\expandafter\expandafter\expandafter\@pdr\expandafter\expandafter\expandafter{\expandafter\@derivative@arg@@@\expandafter}% 再帰 \fiを正常に動かすためにexpandafterをつける
+		%
+		\expandafter\renewcommand% 分母更新
+		\expandafter\@derivative@denominator%
+		\expandafter{%
+			\@derivative@denominator \partial #1^{#2}%
+		}%
+		%
+		\expandafter\expandafter\expandafter\@pdr% 再帰 \fiを正常に動かすためにexpandafterをつける
+		\expandafter\expandafter\expandafter{%
+		\expandafter\@derivative@arg@@@%
+		\expandafter}%
 	\fi%
 }
 
