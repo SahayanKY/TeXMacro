@@ -1,0 +1,115 @@
+\documentclass{jsarticle}
+\usepackage{amsmath}
+\usepackage{bm}
+
+\usepackage{derivative}
+
+\renewcommand{\d}{\textrm{d}}
+
+\begin{document}
+%
+%表を挿入
+\begin{table}[htpt]
+\centering
+\begin{tabular}{cccc}
+No & command & expected & result \\
+\hline
+1&	\verb|\odr{x}{f}|				& $\displaystyle \frac{\d f}{\d x}$
+									& $\displaystyle \odr{x}{f}$ \\[3mm]
+2&	\verb|\odr{x}[2]{f}|			& $\displaystyle \frac{\d^2 f}{\d x^2}$
+									& $\displaystyle \odr{x}[2]{f}$ \\[3mm]
+3&	\verb|\odr{x}[n]{f}|			& $\displaystyle \frac{\d^n f}{\d x^n}$
+									& $\displaystyle \odr{x}[n]{f}$ \\[3mm]
+4&	\verb|\odr{x_1}{f}|				& $\displaystyle \frac{\d f}{\d x_1}$
+									& $\displaystyle \odr{x_1}{f}$ \\[3mm]
+5&	\verb|\odr{x_1}{y_2}|			& $\displaystyle \frac{\d y_2}{\d x_1}$
+									& $\displaystyle \odr{x_1}{y_2}$ \\[3mm]
+6&	\verb|\odr{t}{\bm{u}}|			& $\displaystyle \frac{\d\bm{u}}{\d t}$
+									& $\displaystyle \odr{t}{\bm{u}}$ \\[3mm]
+7&	\verb|\odr{\bm{x}}{f}|			& $\displaystyle \frac{\d f}{\d\bm{x}}$
+									& $\displaystyle \odr{\bm{x}}{f}$ \\[3mm]
+\end{tabular}
+\end{table}
+%
+%表を挿入
+\begin{table}[htpt]
+\centering
+\begin{tabular}{cccc}
+No & command & expected & result \\
+\hline
+1&	\verb|\pdr{{x}{f}}|					& $\displaystyle \frac{\partial f}{\partial x}$
+										& $\displaystyle \pdr{{x}{f}}$ \\[3mm]
+2&	\verb|\pdr{{x}[2]{f}}|				& $\displaystyle \frac{\partial^2 f}{\partial x^2}$
+										& $\displaystyle \pdr{{x}[2]{f}}$ \\[3mm]
+3&	\verb|\pdr{{x}{y}{f}}|				& $\displaystyle \frac{\partial^2 f}{\partial x \partial y}$
+										& $\displaystyle \pdr{{x}{y}{f}}$ \\[3mm]
+4&	\verb|\pdr{{x}[2]{y}{f}}|			& $\displaystyle \frac{\partial^3 f}{\partial x^2 \partial y}$
+										& $\displaystyle \pdr{{x}[2]{y}{f}}$ \\[3mm]
+5&	\verb|\pdr{{x}[2]{y}[3]{f}}|		& $\displaystyle \frac{\partial^5 f}{\partial x^2 \partial y^3}$
+										& $\displaystyle \pdr{{x}[2]{y}[3]{f}}$ \\[3mm]
+6&	\verb|\pdr{{x_1}{y}}|				& $\displaystyle \frac{\partial y}{\partial x_1}$
+										& $\displaystyle \pdr{{x_1}{y}}$ \\[3mm]
+7&	\verb|\pdr{{x}{f_2}}|				& $\displaystyle \frac{\partial f_2}{\partial x}$
+										& $\displaystyle \pdr{{x}{f_2}}$ \\[3mm]
+8&	\verb|\pdr{{x_1}{t}{f}}|			& $\displaystyle \frac{\partial^2 f}{\partial x_1 \partial t}$
+										& $\displaystyle \pdr{{x_1}{t}{f}}$ \\[3mm]
+9&	\verb|\pdr{{x_1}{x_2}{f}}|			& $\displaystyle \frac{\partial^2 f}{\partial x_1 \partial x_2}$
+										& $\displaystyle \pdr{{x_1}{x_2}{f}}$ \\[3mm]
+10&	\verb|\pdr{{\bm{x}}{f}}|			& $\displaystyle \frac{\partial f}{\partial \bm{x}}$
+										& $\displaystyle \pdr{{\bm{x}}{f}}$ \\[3mm]
+11&	\verb|\pdr{{\bm{x}}{\bm{y}}{f}}|	& $\displaystyle \frac{\partial^2 f}{\partial \bm{x} \partial \bm{y}}$
+										& $\displaystyle \pdr{{\bm{x}}{\bm{y}}{f}}$ \\[3mm]
+12&	\verb|\pdr{{\bm{x}_1}{\bm{y}_2}{f}}|& $\displaystyle \frac{\partial^2 f}{\partial \bm{x}_1 \partial \bm{y}_2}$
+										& $\displaystyle \pdr{{\bm{x}_1}{\bm{y}_2}{f}}$ \\[3mm]
+13&	\verb|\pdr{{x}[2]{\bm{u}}}|			& $\displaystyle \frac{\partial^2 \bm{u}}{\partial x^2}$
+										& $\displaystyle \pdr{{x}[2]{\bm{u}}}$ \\[3mm]
+14&	\verb|\pdr{{x}{\bm{u}}}+\pdr{{y}{\bm{u}}}| & $\displaystyle \frac{\partial \bm{u}}{\partial x} + \frac{\partial \bm{u}}{\partial y}$
+										& $\displaystyle \pdr{{x}{\bm{u}}}+\pdr{{y}{\bm{u}}}$ \\[3mm]
+15&	\verb|\pdr{{x}{}}| 					& $\displaystyle \frac{\partial}{\partial x}$
+										& $\displaystyle \pdr{{x}{}}$ \\[3mm]
+16&	\verb|\pdr{{x_1}{}}|				& $\displaystyle \frac{\partial}{\partial x_1}$
+										& $\displaystyle \pdr{{x_1}{}}$ \\[3mm]
+17&	\verb|\pdr{{\bm{x}}{}}|				& $\displaystyle \frac{\partial}{\partial \bm{x}}$
+										& $\displaystyle \pdr{{\bm{x}}{}}$ \\[3mm]
+\end{tabular}
+\end{table}
+%
+%表を挿入
+\begin{table}[htpt]
+\centering
+\begin{tabular}{cccc}
+No & command & expected & result \\
+\hline
+1& \verb|\pdr*{{x}[n]{f}[n]}|			& $\displaystyle \frac{\partial^n f}{\partial x^n}$
+										& $\displaystyle \pdr*{{x}[n]{f}[n]}$ \\[3mm]
+2& \verb|\pdr*{{x}[n]{}[n]}|			& $\displaystyle \frac{\partial^n}{\partial x^n}$
+										& $\displaystyle \pdr*{{x}[n]{f}[n]}$ \\[3mm]
+3& \verb|\pdr*{{x}[n]{y}[m]{f}[n+m]}|	& $\displaystyle \frac{\partial^{n+m} f}{\partial x^n \partial y^m}$
+										& $\displaystyle \pdr*{{x}[n]{y}[m]{f}[n+m]}$ \\[3mm]
+4& \verb|\pdr*{{x}[1]{y}[1]{f}[1+1]}|	& $\displaystyle \frac{\partial^{1+1} f}{\partial x^1 \partial y^1}$
+										& $\displaystyle \pdr*{{x}[1]{y}[1]{f}[1+1]}$ \\[3mm]
+5& \verb|\pdr*{{x}{y}[n]{f}[n+1]}|		& $\displaystyle \frac{\partial^{n+1} f}{\partial x \partial y^n}$
+										& $\displaystyle \pdr*{{x}{y}[n]{f}[n+1]}$ \\[3mm]
+\end{tabular}
+\end{table}
+%
+%表を挿入
+\begin{table}[htpt]
+\centering
+\begin{tabular}{cccc}
+No & command & expected & result \\
+\hline
+1& \verb|\pdrr{{x}{f}}|					& $\displaystyle \partial_{x} f$
+										& $\displaystyle \pdrr{{x}{f}}$ \\[3mm]
+2& \verb|\pdrr{{i}{j}{f}}|				& $\displaystyle \partial_{i}\partial_{j} f$
+										& $\displaystyle \pdrr{{i}{j}{f}}$ \\[3mm]
+3& \verb|\pdrr{{i}*{j}{f}}|				& $\displaystyle \partial_{i}\partial^{j} f$
+										& $\displaystyle \pdrr{{i}*{j}{f}}$ \\[3mm]
+4& \verb|\pdrr{*{i}{j}{f}}|				& $\displaystyle \partial^{i}\partial_{j} f$
+										& $\displaystyle \pdrr{*{i}{j}{f}}$ \\[3mm]
+\end{tabular}
+\end{table}
+
+
+
+\end{document}

@@ -1,0 +1,77 @@
+\documentclass{jsarticle}
+\usepackage{amsmath}
+\usepackage{braket}
+
+\makeatletter
+\newcommand{\rightoperator}[3]{%
+	%#1:演算子をかける対象を括弧で囲むかどうか
+	%	0->囲まない
+	%	n->囲まない(ただし括弧と同様の挙動, double subscript対策)
+	%	p->()で囲む
+	%	c->{}で囲む
+	%#2:演算子
+	%#3:演算子をかける対象
+	\ensuremath{%
+		\ifx 0#1%
+			#3#2%
+		\else{%
+			\ifx n#1%
+				{#3}#2%
+			\else{%
+				\ifx p#1%
+					\left(#3\right)#2%
+				\else{%
+					\ifx c#1%
+						\left\{#3\right\}#2%
+					\else{%
+						\text{エラー}%
+					}\fi%
+				}\fi%
+			}\fi%
+		}\fi%
+	}%
+}
+
+
+%------------------------------------------------------------------
+\newcommand{\adj}[2][0]{%
+	%#1:演算子をかける対象を括弧で囲むかどうか
+	%	0->囲まない
+	%	n->囲まない(ただし括弧と同様の挙動, double subscript対策)
+	%	p->()で囲む
+	%	c->{}で囲む
+	%#2:演算子をかける対象
+	\ensuremath{%
+		\rightoperator{#1}{^{\dagger}}{#2}%
+	}%
+}
+%
+%\adj{a_{ij}}のように括弧内に2文字以上が存在するとうまくいかない
+%
+
+\makeatother
+
+
+\begin{document}
+\tracingonline=1
+\tracingmacros=1
+\tracingcommands=1
+
+\begin{align}
+ 	\adj{a_i} \\
+ 	\adj[n]{a_i^k} \\
+ 	\adj{a_{i}} \\
+	\adj{a_{ij}} \\
+ 	\adj[n]{a^{ijk}} \\
+ 	\adj{\overline{1}} \\
+ 	\adj{\braket{i|h|j}} \\
+ 	\adj[p]{a_i a_j}
+\end{align}
+
+\begin{align}
+	\adj[n]{\adj{a_i}}
+\end{align}
+
+
+
+\end{document}
