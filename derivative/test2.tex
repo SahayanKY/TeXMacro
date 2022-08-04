@@ -52,7 +52,7 @@
 % 一つずつ読み取っていく
 \NewDocumentCommand\@pdr{m O{} m}{%
 	\renewcommand{\@derivative@arg@@@}{#3}%
-	\ifx#3\@pdr@end% 分母処理(最終)
+	\ifx#3\@pdr@end% 分子処理(最終)
 		\renewcommand{\@derivative@numerator}{%
 			\partial^{%
  				\if@derivative@calcOrder@%
@@ -62,7 +62,7 @@
  				\fi%
 			} #1%
 		}%
-	\else% 分子処理
+	\else% 分母処理
 		\if@derivative@calcOrder@%
 			\@derivative@addToTotalOrder{#2}% 階数に足しこむ
 		\fi%
