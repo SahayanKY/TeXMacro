@@ -1,0 +1,56 @@
+\documentclass{jsarticle}
+\usepackage{amsmath}
+\usepackage{xparse}
+
+\makeatletter
+
+% https://zrbabbler.hatenablog.com/entry/20110903/1315024613
+% 一つずつ読み取っていく
+\NewDocumentCommand\@pdrr{s m O{\hfuzz}}{%
+	\ifx#3\@pdrr@end% 最終
+		% 微分演算の対象関数
+		#2%
+	\else%
+		% 微分演算子
+		\IfBooleanTF{#1}{% *が付与されていた場合上付き
+			\partial^{#2}%
+		}{% 下付き
+			\partial_{#2}%
+		}%
+		%
+		\expandafter\@pdrr%
+	\fi%
+}
+
+% 終了判定用
+\newcommand{\@pdrr@end}{\@pdrr@end@}
+
+\newcommand{\pdrr}[1]{%
+	\@pdrr#1[\@pdrr@end]%
+}
+
+
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% physicsパッケージの偏微分マクロは相対論で特に使われる表記$\partial_x f$
+% に対応してないので、それ用のマクロを組む
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+\tracingonline=1
+\tracingmacros=1
+\tracingcommands=1
+
+
+偏微分マクロ2\verb|\pdrr|
+\begin{align}
+1		&\	\pdrr{{x}{f}} \\ 				% pass
+2		&\	\pdrr{{i}{j}{f}} \\ 			% pass
+3		&\	\pdrr{{i}*{j}{f}} \\ 			% pass
+4		&\	\pdrr{*{i}{j}{f}} \\ 			% pass
+\end{align}
+
+
+\end{document}
