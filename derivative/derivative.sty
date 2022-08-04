@@ -1,0 +1,166 @@
+\NeedsTeXFormat{LaTeX2e}[2019/10/01]
+\ProvidesPackage{derivative}[2022/08/04 v1.0]
+
+\RequirePackage{xparse}
+\RequirePackage{amsmath}
+
+% settings for options in \usepackage[]{derivative}
+\newif\if@derivative@d@isRoman@
+\DeclareOption{romand}{\@derivative@d@isRoman@true}
+\DeclareOption{italicd}{\@derivative@d@isRoman@false}
+\ExecuteOptions{romand} % default options
+\ProcessOptions\relax
+
+% definitions
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% infinitesimal
+\if@derivative@d@isRoman@%
+	\newcommand{\@derivative@d}{\textrm{d}}%
+\else%
+	\newcommand{\@derivative@d}{\textit{d}}%
+\fi%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ordinary derivative
+\NewDocumentCommand\odr{m O{} m}{%
+	\frac{%
+		{\@derivative@d}^{#2} #3%
+	}{%
+		\@derivative@d #1^{#2}%
+	}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% partial derivative (typical notation)
+
+% counter for calculating order
+\newcounter{@derivative@pdr@totalOrder}
+% whether calculate order
+% this is false if 'n' etc. is specified as order
+\newif\if@derivative@pdr@calcOrder@
+% calculate order
+\newcommand{\@derivative@pdr@addToTotalOrder}[1]{%
+	\ifx\hfuzz#1\hfuzz% #1 is empty
+		\addtocounter{@derivative@pdr@totalOrder}{1}%
+	\else%
+		\addtocounter{@derivative@pdr@totalOrder}{#1}%
+	\fi%
+}
+% print order
+\newcommand{\@derivative@pdr@printTotalOrder}{%
+	\ifnum\value{@derivative@pdr@totalOrder}=1% if order is 1
+		% no print
+	\else%
+		\the@derivative@pdr@totalOrder% print order
+	\fi%
+}
+
+%%%%%%%%%%%%%%%%%%
+% reset inner variables
+\newcommand{\@derivative@pdr@resetInnerVar}{%
+	\setcounter{@derivative@pdr@totalOrder}{0}%
+	%
+	% (Re)define variables to temporarily store the denominator and numerator of the partial derivative
+	\def\@derivative@pdr@denominator{}% denominator
+	\def\@derivative@pdr@numerator{}% numerator
+}
+
+% to store the 3rd arg of \@derivative@pdr
+\def\@derivative@pdr@arg@@@{}
+% process arguments recursively
+\NewDocumentCommand\@derivative@pdr{m O{} m}{%
+	\renewcommand{\@derivative@pdr@arg@@@}{#3}%
+	\ifx#3\@derivative@pdr@end%
+		% process numerator (final step)
+		\renewcommand{\@derivative@pdr@numerator}{%
+			\partial^{%
+ 				\if@derivative@pdr@calcOrder@%
+ 					\@derivative@pdr@printTotalOrder%
+ 				\else%
+ 					#2%
+ 				\fi%
+			} #1%
+		}%
+	\else%
+		% process denominator
+		\if@derivative@pdr@calcOrder@%
+			\@derivative@pdr@addToTotalOrder{#2}% update total order
+		\fi%
+		%
+		% update denominator
+		\expandafter\renewcommand%
+		\expandafter\@derivative@pdr@denominator%
+		\expandafter{%
+			\@derivative@pdr@denominator \partial #1^{#2}%
+		}%
+		%
+		% recursion
+		% add \expandafter to make \fi work properly
+		\expandafter\expandafter\expandafter\@derivative@pdr%
+		\expandafter\expandafter\expandafter{%
+		\expandafter\@derivative@pdr@arg@@@%
+		\expandafter}%
+	\fi%
+}
+
+% for end judgement
+\newcommand{\@derivative@pdr@end}{\@derivative@pdr@end@}
+
+% main macro
+\NewDocumentCommand{\pdr}{s m}{%
+	% initialize internal variables
+	\@derivative@pdr@resetInnerVar%
+	\IfBooleanTF{#1}{%
+		% do not calculate order if star, i.e. '*', is specified
+		\@derivative@pdr@calcOrder@false%
+	}{%
+		\@derivative@pdr@calcOrder@true%
+	}%
+	% process arguments
+	\@derivative@pdr#2\@derivative@pdr@end%
+	% print result
+	\frac{\@derivative@pdr@numerator}{\@derivative@pdr@denominator}%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% partial derivative (notation especially used in theory of relativity)
+
+\NewDocumentCommand\@derivative@pdrr{s m O{\hfuzz}}{%
+	\ifx#3\@derivative@pdrr@end%
+		% final step
+		% print target function of differential operation
+		#2%
+	\else%
+		% differential operation
+		\IfBooleanTF{#1}{%
+			% superscript if * was given
+			\partial^{#2}%
+		}{%
+			% subscript
+			\partial_{#2}%
+		}%
+		%
+		% recursion
+		\expandafter\@derivative@pdrr%
+	\fi%
+}
+
+% for end judgement
+\newcommand{\@derivative@pdrr@end}{\@derivative@pdrr@end@}
+
+% main macro
+\newcommand{\pdrr}[1]{%
+	\@derivative@pdrr#1[\@derivative@pdrr@end]%
+}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% end of definitions
+\makeatother
