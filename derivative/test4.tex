@@ -5,11 +5,14 @@
 
 \makeatletter
 
-\RenewDocumentCommand\div{t't't't't' D<>{} O{} D(){0} m}{%
-	\ensuremath{%
+\def\@derivative@vecOp@op{}
+
+\newcommand{\@derivative@vecOp@setOp}[7]{%
+	\renewcommand{\@derivative@vecOp@op}{%
 		\nabla%
 		%\IfBooleanT{#1}{'}\IfBooleanT{#2}{'}\IfBooleanT{#3}{'}%
 		%\IfBooleanT{#4}{'}\IfBooleanT{#5}{'}%
+		% 何故か上のやり方ではdouble superscriptになったので下に修正
 		\IfBooleanTF{#1}{
 			\IfBooleanTF{#2}{
 				\IfBooleanTF{#3}{
@@ -22,7 +25,13 @@
 			}{'}
 		}{}
 		{}^{#6}_{#7}%
-		\cdot%
+	}
+}
+
+\RenewDocumentCommand\div{t't't't't' D<>{} O{} D(){0} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}
+	\ensuremath{%
+		\@derivative@vecOp@op\cdot%
 		\ifnum #8=0%
 			#9%
 		\else{%
@@ -39,24 +48,9 @@
 	}
 }
 \NewDocumentCommand\laplace{t't't't't' D<>{} O{} D(){0} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}
 	\ensuremath{%
-		{%
-			\nabla%
-			%\IfBooleanT{#1}{'}\IfBooleanT{#2}{'}\IfBooleanT{#3}{'}%
-			%\IfBooleanT{#4}{'}\IfBooleanT{#5}{'}%
-			\IfBooleanTF{#1}{
-				\IfBooleanTF{#2}{
-					\IfBooleanTF{#3}{
-						\IfBooleanTF{#4}{
-							\IfBooleanTF{#5}{
-								'''''
-							}{''''}
-						}{'''}
-					}{''}
-				}{'}
-			}{}
-			{}^{#6}_{#7}%
-		}^{2}%
+		{\@derivative@vecOp@op}^{2}%
 		\ifnum #8=0%
 			#9%
 		\else{%
@@ -101,7 +95,8 @@
 \begin{align}
 	\laplace{f} \\
 	\laplace'''{f} \\
-	{\nabla'''{}^{}_{}}^{2} f
+	{\nabla'''{}^{}_{}}^{2} f \\
+	\laplace[\bm{r}']{f}
 \end{align}
 
 
