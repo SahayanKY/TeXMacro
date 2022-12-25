@@ -109,6 +109,27 @@ No & command & expected & result \\
 										& $\displaystyle \pdrr{*{i}{j}{f}}$ \\[3mm]
 \end{tabular}
 \end{table}
+%
+%表を挿入
+\begin{table}[htpt]
+\centering
+\begin{tabular}{cccc}
+No & command & expected & result \\
+\hline
+1& \verb|\grad{f}|						& $\displaystyle \nabla f$
+										& $\displaystyle \grad{f}$ \\[3mm]
+2& \verb|\div{\bm{v}}|					& $\displaystyle \nabla\cdot\bm{v}$
+										& $\displaystyle \div{\bm{v}}$ \\[3mm]
+3& \verb|\rot{\bm{v}}|					& $\displaystyle \nabla\times\bm{v}$
+										& $\displaystyle \rot{\bm{v}}$ \\[3mm]
+4& \verb|\laplace{f}|					& $\displaystyle \Delta f$
+										& $\displaystyle \laplace{f}$ \\[3mm]
+5& \verb|\laplace[2]{f}|				& $\displaystyle \nabla^2 f$
+										& $\displaystyle \laplace[2]{f}$ \\[3mm]
+\end{tabular}
+\end{table}
+
+
 
 
 

@@ -1,0 +1,117 @@
+\documentclass{jsarticle}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{xparse}
+
+\makeatletter
+
+\RenewDocumentCommand\div{t't't't't' D<>{} O{} D(){0} m}{%
+	\ensuremath{%
+		\nabla%
+		%\IfBooleanT{#1}{'}\IfBooleanT{#2}{'}\IfBooleanT{#3}{'}%
+		%\IfBooleanT{#4}{'}\IfBooleanT{#5}{'}%
+		\IfBooleanTF{#1}{
+			\IfBooleanTF{#2}{
+				\IfBooleanTF{#3}{
+					\IfBooleanTF{#4}{
+						\IfBooleanTF{#5}{
+							'''''
+						}{''''}
+					}{'''}
+				}{''}
+			}{'}
+		}{}
+		{}^{#6}_{#7}%
+		\cdot%
+		\ifnum #8=0%
+			#9%
+		\else{%
+			\ifnum #8=1%
+				\left(#9\right)%
+			\else{%
+				\ifnum #8=2%
+					\left\{#9\right\}%
+				\else{%
+					\text{エラー}%
+				}\fi%
+			}\fi%
+		}\fi%
+	}
+}
+\NewDocumentCommand\laplace{t't't't't' D<>{} O{} D(){0} m}{%
+	\ensuremath{%
+		{%
+			\nabla%
+			%\IfBooleanT{#1}{'}\IfBooleanT{#2}{'}\IfBooleanT{#3}{'}%
+			%\IfBooleanT{#4}{'}\IfBooleanT{#5}{'}%
+			\IfBooleanTF{#1}{
+				\IfBooleanTF{#2}{
+					\IfBooleanTF{#3}{
+						\IfBooleanTF{#4}{
+							\IfBooleanTF{#5}{
+								'''''
+							}{''''}
+						}{'''}
+					}{''}
+				}{'}
+			}{}
+			{}^{#6}_{#7}%
+		}^{2}%
+		\ifnum #8=0%
+			#9%
+		\else{%
+			\ifnum #8=1%
+				\left(#9\right)%
+			\else{%
+				\ifnum #8=2%
+					\left\{#9\right\}%
+				\else{%
+					\text{エラー}%
+				}\fi%
+			}\fi%
+		}\fi%
+	}
+}
+
+
+
+%\NewDocumentCommand\@vectorOperator
+
+
+\makeatother
+
+
+
+\begin{document}
+\tracingonline=1
+\tracingmacros=1
+\tracingcommands=1
+
+
+\begin{align}
+	\div{\bm{v}} \\
+	\div[\bm{r}]{\bm{v}} \\
+	\div[\bm{r}[2]]{\bm{v}} \\
+	\div'{\bm{v}} \\
+	\div'''{\bm{v}} \\
+	\nabla'\cdot\bm{v} \\
+	\div(2){\bm{v}}
+\end{align}
+
+\begin{align}
+	\laplace{f} \\
+	\laplace'''{f} \\
+	{\nabla'''{}^{}_{}}^{2} f
+\end{align}
+
+
+% ベクトル演算子マクロ2\verb|\pdrr|
+% \begin{align}
+% 1		&\	\pdrr{{x}{f}} \\ 				% pass
+% 2		&\	\pdrr{{i}{j}{f}} \\ 			% pass
+% 3		&\	\pdrr{{i}*{j}{f}} \\ 			% pass
+% 4		&\	\pdrr{*{i}{j}{f}} \\ 			% pass
+% \end{align}
+
+
+\end{document}
