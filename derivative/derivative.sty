@@ -157,6 +157,121 @@
 }
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% vector operator (grad, div, rot(curl), laplace)
+
+% define inner variables
+\def\@derivative@vecOp@op{}
+% setting for operator (the part about nabla)
+\newcommand{\@derivative@vecOp@setOp}[8]{%
+	\renewcommand{\@derivative@vecOp@op}{%
+		{#8}%
+		%\IfBooleanT{#1}{'}\IfBooleanT{#2}{'}\IfBooleanT{#3}{'}%
+		%\IfBooleanT{#4}{'}\IfBooleanT{#5}{'}%
+		%-> Because super script problem occurs, rewrite as follows
+		\IfBooleanTF{#1}{%
+			\IfBooleanTF{#2}{%
+				\IfBooleanTF{#3}{%
+					\IfBooleanTF{#4}{%
+						\IfBooleanTF{#5}{%
+							'''''%
+						}{''''}%
+					}{'''}%
+				}{''}%
+			}{'}%
+		}{}%
+		\IfValueTF{#6}{%
+			{{}^{#6}_{#7}}%
+		}{%
+			{}_{#7}%
+		}
+	}
+}
+\newcommand{\@derivative@vecOp@generic}[4]{%
+	\ensuremath{%
+		#1#2#3#4%
+	}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% grad %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\NewDocumentCommand\grad{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op}{}{#8}{}%
+}
+\NewDocumentCommand\Grad{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op}{\left(}{#8}{\right)}%
+}
+\NewDocumentCommand\gradr{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{grad}}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{}{#8}{}%
+}
+\NewDocumentCommand\Gradr{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{grad}}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{\left(}{#8}{\right)}%
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% div %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RenewDocumentCommand\div{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\cdot}{}{#8}{}%
+}
+\NewDocumentCommand\Div{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\cdot}{\left(}{#8}{\right)}%
+}
+\NewDocumentCommand\divr{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{div}}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{}{#8}{}%
+}
+\NewDocumentCommand\Divr{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{div}}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{\left(}{#8}{\right)}%
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% rot, curl %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\NewDocumentCommand\rot{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\times}{}{#8}{}%
+}
+\NewDocumentCommand\Rot{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\times}{\left(}{#8}{\right)}%
+}
+\NewDocumentCommand\rotr{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{rot}}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{}{#8}{}%
+}
+\NewDocumentCommand\Rotr{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{rot}}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{\left(}{#8}{\right)}%
+}
+\newcommand{\curl}{\rot}
+\newcommand{\Curl}{\Rot}
+\NewDocumentCommand\curlr{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{curl}}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{}{#8}{}%
+}
+\NewDocumentCommand\Curlr{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{curl}}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{\left(}{#8}{\right)}%
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% laplace %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\laplace}{\laplacen}
+\NewDocumentCommand\laplacen{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op^{2}}{}{#8}{}%
+}
+\NewDocumentCommand\Laplacen{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op^{2}}{\left(}{#8}{\right)}%
+}
+\NewDocumentCommand\laplaced{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\Delta}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op}{}{#8}{}%
+}
+\NewDocumentCommand\Laplaced{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\Delta}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op}{\left(}{#8}{\right)}%
+}
 
 
 
