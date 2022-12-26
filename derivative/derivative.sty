@@ -272,6 +272,15 @@
 	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\Delta}%
 	\@derivative@vecOp@generic{\@derivative@vecOp@op}{\left(}{#8}{\right)}%
 }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% hesse %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\NewDocumentCommand\hesse{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\otimes\@derivative@vecOp@op}{}{#8}{}%
+}
+\NewDocumentCommand\Hesse{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\otimes\@derivative@vecOp@op}{\left(}{#8}{\right)}%
+}
 
 
 
