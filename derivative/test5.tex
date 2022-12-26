@@ -1,0 +1,205 @@
+\documentclass{jsarticle}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{xparse}
+
+%
+% test4.texの改良版
+% - 作用対象をくくる括弧の種類を自由に選べるように変更
+% - 括弧のサイズを変更できるように拡張
+% - 一々nabla', nabla'', ...の定義を打ち込まなくても済むように改良
+
+
+\makeatletter
+\ExplSyntaxOn
+
+\newcommand{\@derivative@vecOp@opDeco@one}{}
+\newcommand{\@derivative@vecOp@opDeco@two}{}
+\newcommand{\@derivative@vecOp@opDeco@three}{}
+\newcommand{\@derivative@vecOp@opDeco@four}{}
+\newcommand{\@derivative@vecOp@opDeco@five}{}
+\newcommand{\@derivative@braceTag}{}
+
+\keys_define:nn{derivative}{
+	nabla-deco-1 .code:n = \renewcommand{\@derivative@vecOp@opDeco@one}{#1},
+	nabla-deco-2 .code:n = \renewcommand{\@derivative@vecOp@opDeco@two}{#1},
+	nabla-deco-3 .code:n = \renewcommand{\@derivative@vecOp@opDeco@three}{#1},
+	nabla-deco-4 .code:n = \renewcommand{\@derivative@vecOp@opDeco@four}{#1},
+	nabla-deco-5 .code:n = \renewcommand{\@derivative@vecOp@opDeco@five}{#1}
+}
+
+\newcommand{\derivativesetup}[1]{
+	\keys_set:nn{derivative}{#1}
+}
+
+\newcommand{\@derivative@vecOp@deco}[5]{
+	\IfBooleanTF{#1}{
+		\IfBooleanTF{#2}{
+			\IfBooleanTF{#3}{
+				\IfBooleanTF{#4}{
+					\IfBooleanTF{#5}{
+						\@derivative@vecOp@opDeco@five
+					}{
+						\@derivative@vecOp@opDeco@four
+					}
+				}{
+					\@derivative@vecOp@opDeco@three
+				}
+			}{
+				\@derivative@vecOp@opDeco@two
+			}
+		}{
+			\@derivative@vecOp@opDeco@one
+		}
+	}{}
+}
+
+\NewDocumentCommand\@derivative@vecOp@procTarget{d() d[] t! g}{%
+	\ensuremath{%
+		\IfValueTF{#1}{%
+			\@derivative@braceTagL(%
+				#1%
+			\@derivative@braceTagR)%
+		}{%
+			\IfValueTF{#2}{%
+				\@derivative@braceTagL[%
+					#2%
+				\@derivative@braceTagR]%
+			}{%
+				\IfBooleanTF{#3}{% enforce to print {}
+					\IfValueT{#4}{%
+						\@derivative@braceTagL\{%
+							#4%
+						\@derivative@braceTagR\}%
+					}
+				}{%
+					\IfValueT{#4}{% no brace
+						#4%
+					}
+				}
+			}
+		}
+	}
+}
+\NewDocumentCommand\@derivative@vecOp@setBraceTag{t\big t\Big t\bigg t\Bigg}{%
+	\IfBooleanTF{#1}{
+		\let\@derivative@braceTagL\bigl
+		\let\@derivative@braceTagR\bigr
+	}{
+		\IfBooleanTF{#2}{
+			\let\@derivative@braceTagL\Bigl
+			\let\@derivative@braceTagR\Bigr
+		}{
+			\IfBooleanTF{#3}{
+				\let\@derivative@braceTagL\biggl
+				\let\@derivative@braceTagR\biggr
+			}{
+				\IfBooleanTF{#4}{
+					\let\@derivative@braceTagL\Biggl
+					\let\@derivative@braceTagR\Biggr
+				}{
+					\let\@derivative@braceTagL\left
+					\let\@derivative@braceTagR\right
+				}
+			}
+		}
+	}
+	\@derivative@vecOp@procTarget
+}
+
+\NewDocumentCommand\grad{t't't't't'}{%
+	\ensuremath{%
+		\nabla\@derivative@vecOp@deco{#1}{#2}{#3}{#4}{#5}%
+	}%
+	\@derivative@vecOp@setBraceTag%
+}
+\NewDocumentCommand\gradr{t't't't't'}{%
+	\ensuremath{%
+		\textrm{grad}\@derivative@vecOp@deco{#1}{#2}{#3}{#4}{#5}\,%
+	}%
+	\@derivative@vecOp@setBraceTag%
+}
+\RenewDocumentCommand\div{t't't't't'}{%
+	\ensuremath{%
+		\nabla\@derivative@vecOp@deco{#1}{#2}{#3}{#4}{#5}\cdot%
+	}%
+	\@derivative@vecOp@setBraceTag%
+}
+\NewDocumentCommand\divr{t't't't't'}{%
+	\ensuremath{%
+		\textrm{div}\@derivative@vecOp@deco{#1}{#2}{#3}{#4}{#5}\,%
+	}%
+	\@derivative@vecOp@setBraceTag%
+}
+\NewDocumentCommand\laplacen{t't't't't'}{%
+	\ensuremath{%
+		\nabla\@derivative@vecOp@deco{#1}{#2}{#3}{#4}{#5}^2%
+	}%
+	\@derivative@vecOp@setBraceTag%
+}
+\NewDocumentCommand\laplaced{t't't't't'}{%
+	\ensuremath{%
+		\Delta\@derivative@vecOp@deco{#1}{#2}{#3}{#4}{#5}%
+	}%
+	\@derivative@vecOp@setBraceTag%
+}
+
+
+\ExplSyntaxOff
+\makeatother
+
+
+\derivativesetup{
+	nabla-deco-1 = ',
+	nabla-deco-2 = '',
+	nabla-deco-3 = _{\bm{r}'''},
+	nabla-deco-4 = ^{(4)}{},
+	nabla-deco-5 = ^{(5)}{},
+}
+
+
+
+\begin{document}
+%\tracingonline=1
+%\tracingmacros=1
+%\tracingcommands=1
+\begin{align}
+	\left(\frac{1}{2}\right) \\
+	\Bigg(\frac{1}{2}\Bigg) \\
+	\Biggl(\frac{1}{2}\Biggr) \\
+	a''^2 \\
+	%a^2''
+\end{align}
+\begin{align}
+	\grad{f} \\
+	\grad!{f} \\
+	\grad(f) \\
+	\grad[f] \\
+	\grad\Bigg!{f} \\
+	\grad \\
+ 	\grad' \\
+ 	\grad'' \\
+ 	\grad''' \\
+ 	\grad''''
+\end{align}
+
+\begin{align}
+	\div{\bm{v}} \\
+	\div'{\bm{v}} \\
+	\div''(\bm{v}) \\
+	\div'''\big[\bm{v}] \\
+	\divr{\bm{v}} \\
+	\divr''{\bm{v}}
+\end{align}
+
+\begin{align}
+	\laplacen{f} &\quad \laplaced{f}\\
+	\laplacen''\bigg(f) &\quad \laplaced''\bigg(f)\\
+	\laplacen'''{f} &\quad \laplaced'''{f}\\
+	\laplacen''''!{f} &\quad \laplaced''''!{f}\\
+\end{align}
+
+
+
+
+\end{document}
