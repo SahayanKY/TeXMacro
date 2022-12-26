@@ -1,0 +1,119 @@
+\documentclass{jsarticle}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{xparse}
+
+\makeatletter
+
+\def\@derivative@vecOp@op{}
+
+\newcommand{\@derivative@vecOp@setOp}[8]{%
+	\renewcommand{\@derivative@vecOp@op}{%
+		{#8}%
+		%\IfBooleanT{#1}{'}\IfBooleanT{#2}{'}\IfBooleanT{#3}{'}%
+		%\IfBooleanT{#4}{'}\IfBooleanT{#5}{'}%
+		% 何故か上のやり方ではdouble superscriptになったので下に修正
+		\IfBooleanTF{#1}{%
+			\IfBooleanTF{#2}{%
+				\IfBooleanTF{#3}{%
+					\IfBooleanTF{#4}{%
+						\IfBooleanTF{#5}{%
+							'''''%
+						}{''''}%
+					}{'''}%
+				}{''}%
+			}{'}%
+		}{}%
+		\IfValueTF{#6}{%
+			{{}^{#6}_{#7}}
+		}{
+			{}_{#7}
+		}
+	}
+}
+\newcommand{\@derivative@vecOp@generic}[4]{%
+	\ensuremath{%
+		#1#2#3#4
+	}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% div %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RenewDocumentCommand\div{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\cdot}{}{#8}{}
+}
+\NewDocumentCommand\Div{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\cdot}{\left(}{#8}{\right)}
+}
+\NewDocumentCommand\divr{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{div}}
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{}{#8}{}
+}
+\NewDocumentCommand\Divr{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{div}}
+	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{\left(}{#8}{\right)}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% laplace %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\NewDocumentCommand\laplacen{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}
+	\@derivative@vecOp@generic{\@derivative@vecOp@op^{2}}{}{#8}{}
+}
+\NewDocumentCommand\Laplacen{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}
+	\@derivative@vecOp@generic{\@derivative@vecOp@op^{2}}{\left(}{#8}{\right)}
+}
+\NewDocumentCommand\laplaced{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\Delta}
+	\@derivative@vecOp@generic{\@derivative@vecOp@op}{}{#8}{}
+}
+\NewDocumentCommand\Laplaced{t't't't't' d<> O{} m}{%
+	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\Delta}
+	\@derivative@vecOp@generic{\@derivative@vecOp@op}{\left(}{#8}{\right)}
+}
+
+
+
+\makeatother
+
+
+
+\begin{document}
+%\tracingonline=1
+%\tracingmacros=1
+%\tracingcommands=1
+
+
+\begin{align}
+	\div{\bm{v}} \\
+	\div[\bm{r}]{\bm{v}} \\
+	\div[\bm{r}[2]]{\bm{v}} \\
+	\div'{\bm{v}} \\
+	\div'''{\bm{v}} \\
+	\Div{\bm{v}} \\
+	\divr{\bm{v}} \\
+	\divr''{\bm{v}}
+\end{align}
+%
+% \laplace \Laplace \LAPLACE
+%
+\begin{align}
+	\laplacen{f} \quad \laplaced{f}\\
+	\laplacen'''{f} \quad \laplaced'''{f}\\
+	\laplacen[\bm{r}']{f} \quad \laplaced[\bm{r}']{f}\\
+	\laplacen<(2)>[\bm{r}]{f} \quad \laplaced<(2)>[\bm{r}]{f}\\
+\end{align}
+
+
+
+% ベクトル演算子マクロ2\verb|\pdrr|
+% \begin{align}
+% 1		&\	\pdrr{{x}{f}} \\ 				% pass
+% 2		&\	\pdrr{{i}{j}{f}} \\ 			% pass
+% 3		&\	\pdrr{{i}*{j}{f}} \\ 			% pass
+% 4		&\	\pdrr{*{i}{j}{f}} \\ 			% pass
+% \end{align}
+
+
+\end{document}

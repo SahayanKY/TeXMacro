@@ -109,6 +109,53 @@ No & command & expected & result \\
 										& $\displaystyle \pdrr{*{i}{j}{f}}$ \\[3mm]
 \end{tabular}
 \end{table}
+%
+%表を挿入
+\begin{table}[htpt]
+\centering
+\begin{tabular}{cccc}
+No & command & expected & result \\
+\hline
+1& \verb|\grad{f}|						& $\displaystyle \nabla f$
+										& $\displaystyle \grad{f}$ \\[3mm]
+2& \verb|\div\bm{v}|					& $\displaystyle \nabla\cdot\bm{v}$
+										& $\displaystyle \div\bm{v}$ \\[3mm]
+3& \verb|\rot\bm{v}|					& $\displaystyle \nabla\times\bm{v}$
+										& $\displaystyle \rot\bm{v}$ \\[3mm]
+4& \verb|\curl\bm{v}|					& $\displaystyle \nabla\times\bm{v}$
+										& $\displaystyle \curl\bm{v}$ \\[3mm]
+5& \verb|\laplace{f}|					& $\displaystyle \nabla^2 f$
+										& $\displaystyle \laplace{f}$ \\[3mm]
+6& \verb|\laplaced{f}|					& $\displaystyle \Delta f$
+										& $\displaystyle \laplaced{f}$ \\[3mm]
+7& \verb|\laplacen{f}|					& $\displaystyle \nabla^2 f$
+										& $\displaystyle \laplacen{f}$ \\[3mm]
+8& \verb|\hesse{f}|						& $\displaystyle \nabla\otimes\nabla f$
+										& $\displaystyle \hesse{f}$ \\[3mm]
+9& \verb|\gradr{f}|						& $\displaystyle \textrm{grad}\, f$
+										& $\displaystyle \gradr{f}$ \\[3mm]
+10& \verb|\divr{\bm{v}}|					& $\displaystyle \textrm{div}\, \bm{v}$
+										& $\displaystyle \divr{\bm{v}}$ \\[3mm]
+11& \verb|\rotr{\bm{v}}|				& $\displaystyle \textrm{rot}\, \bm{v}$
+										& $\displaystyle \rotr{\bm{v}}$ \\[3mm]
+12& \verb|\grad[\bm{r}]{f}|				& $\displaystyle \nabla_{\bm{r}} f$
+										& $\displaystyle \grad[\bm{r}]{f}$ \\[3mm]
+13& \verb|\grad''{f}|					& $\displaystyle \nabla'' f$
+										& $\displaystyle \grad''{f}$ \\[3mm]
+14& \verb|\grad<(2)>{f}|				& $\displaystyle \nabla^{(2)} f$
+										& $\displaystyle \grad<(2)>{f}$ \\[3mm]
+15& \verb|\gradr''{f}|					& $\displaystyle \textrm{grad}'' f$
+										& $\displaystyle \gradr''{f}$ \\[3mm]
+16& \verb|\hesse''{f}|					& $\displaystyle \nabla''\otimes\nabla'' f$
+										& $\displaystyle \hesse''{f}$ \\[3mm]
+17& \verb|\Grad{f}|						& $\displaystyle \nabla\left(f\right)$
+										& $\displaystyle \Grad{f}$ \\[3mm]
+18& \verb|\Rot''{\bm{v}}|				& $\displaystyle \nabla''\times\left(\bm{v}\right)$
+										& $\displaystyle \Rot''{\bm{v}}$ \\[3mm]
+\end{tabular}
+\end{table}
+
+
 
 
 
