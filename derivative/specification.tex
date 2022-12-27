@@ -28,6 +28,7 @@
 \begin{table}[p]
 \centering
 \caption{
+	常微分マクロの仕様確認。
 	コード\ref{lstDerivativeSetup1}による設定を適用した場合の挙動
 }
 \begin{tabular}{cccc}
@@ -69,6 +70,7 @@ No & command & expected & result \\
 \begin{table}[p]
 \centering
 \caption{
+	常微分マクロの仕様確認。
 	コード\ref{lstDerivativeSetup2}による設定を適用した場合の挙動
 }
 \begin{tabular}{cccc}
@@ -96,6 +98,9 @@ No & command & expected & result \\
 %表を挿入
 \begin{table}[p]
 \centering
+\caption{
+	偏微分マクロの仕様確認
+}
 \begin{tabular}{cccc}
 No & command & expected & result \\
 \hline
@@ -139,6 +144,10 @@ No & command & expected & result \\
 %表を挿入
 \begin{table}[p]
 \centering
+\caption{
+	偏微分マクロの仕様確認。
+	階数の自動計算抑制
+}
 \begin{tabular}{cccc}
 No & command & expected & result \\
 \hline
@@ -158,6 +167,9 @@ No & command & expected & result \\
 %表を挿入
 \begin{table}[p]
 \centering
+\caption{
+	偏微分マクロ(リーマン幾何学の記法)の仕様確認
+}
 \begin{tabular}{cccc}
 No & command & expected & result \\
 \hline
@@ -197,6 +209,7 @@ No & command & expected & result \\
 \begin{table}[p]
 \centering
 \caption{
+	ベクトル演算子マクロの仕様確認。
 	コード\ref{lstDerivativeSetup3}による設定を適用した場合の挙動
 }
 \begin{tabular}{cccc}
@@ -210,7 +223,7 @@ No & command & expected & result \\
 										& $\displaystyle \rot\bm{v}$ \\[3mm]
 4& \verb|\curl\bm{v}|					& $\displaystyle \nabla\times\bm{v}$
 										& $\displaystyle \curl\bm{v}$ \\[3mm]
-5& \verb|\laplace{f}|					& $\displaystyle \nabla^2 f$
+5& \verb|\laplace{f}|					& $\displaystyle \Delta f$
 										& $\displaystyle \laplace{f}$ \\[3mm]
 6& \verb|\laplaced{f}|					& $\displaystyle \Delta f$
 										& $\displaystyle \laplaced{f}$ \\[3mm]
