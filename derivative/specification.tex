@@ -1,16 +1,35 @@
 \documentclass{jsarticle}
 \usepackage{amsmath}
 \usepackage{bm}
+\usepackage{listings,jlisting}
+
 
 \usepackage{derivative}
 
 \renewcommand{\d}{\textrm{d}}
 
 \begin{document}
+\derivativesetup{
+	d = roman,
+}
+\begin{table}[p]
+\begin{lstlisting}[
+	caption=derivativeパッケージのsetup例1,
+	label=lstDerivativeSetup1,
+	basicstyle=\ttfamily\small
+]
+\derivativesetup{
+	d = roman,
+}
+\end{lstlisting}
+\end{table}
 %
 %表を挿入
-\begin{table}[htpt]
+\begin{table}[p]
 \centering
+\caption{
+	コード\ref{lstDerivativeSetup1}による設定を適用した場合の挙動
+}
 \begin{tabular}{cccc}
 No & command & expected & result \\
 \hline
@@ -30,9 +49,52 @@ No & command & expected & result \\
 									& $\displaystyle \odr{\bm{x}}{f}$ \\[3mm]
 \end{tabular}
 \end{table}
+
+\derivativesetup{
+	d = italic,
+}
+\begin{table}[p]
+\begin{lstlisting}[
+	caption=derivativeパッケージのsetup例2,
+	label=lstDerivativeSetup2,
+	basicstyle=\ttfamily\small
+]
+\derivativesetup{
+	d = italic,
+}
+\end{lstlisting}
+\end{table}
 %
 %表を挿入
-\begin{table}[htpt]
+\begin{table}[p]
+\centering
+\caption{
+	コード\ref{lstDerivativeSetup2}による設定を適用した場合の挙動
+}
+\begin{tabular}{cccc}
+No & command & expected & result \\
+\hline
+1&	\verb|\odr{x}{f}|				& $\displaystyle \frac{d f}{d x}$
+									& $\displaystyle \odr{x}{f}$ \\[3mm]
+2&	\verb|\odr{x}[2]{f}|			& $\displaystyle \frac{d^2 f}{d x^2}$
+									& $\displaystyle \odr{x}[2]{f}$ \\[3mm]
+3&	\verb|\odr{x}[n]{f}|			& $\displaystyle \frac{d^n f}{d x^n}$
+									& $\displaystyle \odr{x}[n]{f}$ \\[3mm]
+4&	\verb|\odr{x_1}{f}|				& $\displaystyle \frac{d f}{d x_1}$
+									& $\displaystyle \odr{x_1}{f}$ \\[3mm]
+5&	\verb|\odr{x_1}{y_2}|			& $\displaystyle \frac{d y_2}{d x_1}$
+									& $\displaystyle \odr{x_1}{y_2}$ \\[3mm]
+6&	\verb|\odr{t}{\bm{u}}|			& $\displaystyle \frac{d\bm{u}}{d t}$
+									& $\displaystyle \odr{t}{\bm{u}}$ \\[3mm]
+7&	\verb|\odr{\bm{x}}{f}|			& $\displaystyle \frac{d f}{d\bm{x}}$
+									& $\displaystyle \odr{\bm{x}}{f}$ \\[3mm]
+\end{tabular}
+\end{table}
+
+
+%
+%表を挿入
+\begin{table}[p]
 \centering
 \begin{tabular}{cccc}
 No & command & expected & result \\
@@ -75,7 +137,7 @@ No & command & expected & result \\
 \end{table}
 %
 %表を挿入
-\begin{table}[htpt]
+\begin{table}[p]
 \centering
 \begin{tabular}{cccc}
 No & command & expected & result \\
@@ -94,7 +156,7 @@ No & command & expected & result \\
 \end{table}
 %
 %表を挿入
-\begin{table}[htpt]
+\begin{table}[p]
 \centering
 \begin{tabular}{cccc}
 No & command & expected & result \\
@@ -109,10 +171,34 @@ No & command & expected & result \\
 										& $\displaystyle \pdrr{*{i}{j}{f}}$ \\[3mm]
 \end{tabular}
 \end{table}
+
+\derivativesetup{
+	nabla-deco-1 = ',
+	nabla-deco-2 = '',
+	nabla-deco-3 = _{\bm{r}'''},
+	laplace = delta,
+}
+\begin{table}[p]
+\begin{lstlisting}[
+	caption=derivativeパッケージのsetup例3,
+	label=lstDerivativeSetup3,
+	basicstyle=\ttfamily\small
+]
+\derivativesetup{
+	nabla-deco-1 = ',
+	nabla-deco-2 = '',
+	nabla-deco-3 = _{\bm{r}'''},
+	laplace = delta,
+}
+\end{lstlisting}
+\end{table}
 %
 %表を挿入
-\begin{table}[htpt]
+\begin{table}[p]
 \centering
+\caption{
+	コード\ref{lstDerivativeSetup3}による設定を適用した場合の挙動
+}
 \begin{tabular}{cccc}
 No & command & expected & result \\
 \hline
@@ -134,24 +220,22 @@ No & command & expected & result \\
 										& $\displaystyle \hesse{f}$ \\[3mm]
 9& \verb|\gradr{f}|						& $\displaystyle \textrm{grad}\, f$
 										& $\displaystyle \gradr{f}$ \\[3mm]
-10& \verb|\divr{\bm{v}}|					& $\displaystyle \textrm{div}\, \bm{v}$
+10& \verb|\divr{\bm{v}}|				& $\displaystyle \textrm{div}\, \bm{v}$
 										& $\displaystyle \divr{\bm{v}}$ \\[3mm]
 11& \verb|\rotr{\bm{v}}|				& $\displaystyle \textrm{rot}\, \bm{v}$
 										& $\displaystyle \rotr{\bm{v}}$ \\[3mm]
-12& \verb|\grad[\bm{r}]{f}|				& $\displaystyle \nabla_{\bm{r}} f$
-										& $\displaystyle \grad[\bm{r}]{f}$ \\[3mm]
-13& \verb|\grad''{f}|					& $\displaystyle \nabla'' f$
+12& \verb|\curlr{\bm{v}}|				& $\displaystyle \textrm{curl}\, \bm{v}$
+										& $\displaystyle \curlr{\bm{v}}$ \\[3mm]
+13& \verb|\grad'{f}|					& $\displaystyle \nabla' f$
+										& $\displaystyle \grad'{f}$ \\[3mm]
+14& \verb|\grad''{f}|					& $\displaystyle \nabla'' f$
 										& $\displaystyle \grad''{f}$ \\[3mm]
-14& \verb|\grad<(2)>{f}|				& $\displaystyle \nabla^{(2)} f$
-										& $\displaystyle \grad<(2)>{f}$ \\[3mm]
-15& \verb|\gradr''{f}|					& $\displaystyle \textrm{grad}'' f$
-										& $\displaystyle \gradr''{f}$ \\[3mm]
-16& \verb|\hesse''{f}|					& $\displaystyle \nabla''\otimes\nabla'' f$
-										& $\displaystyle \hesse''{f}$ \\[3mm]
-17& \verb|\Grad{f}|						& $\displaystyle \nabla\left(f\right)$
-										& $\displaystyle \Grad{f}$ \\[3mm]
-18& \verb|\Rot''{\bm{v}}|				& $\displaystyle \nabla''\times\left(\bm{v}\right)$
-										& $\displaystyle \Rot''{\bm{v}}$ \\[3mm]
+15& \verb|\grad'''(\frac{f}{g})|		& $\displaystyle \nabla_{\bm{r}'''} \left(\frac{f}{g}\right)$
+										& $\displaystyle \grad'''(\frac{f}{g})$ \\[3mm]
+16& \verb|\gradr''[f]|					& $\displaystyle \textrm{grad}'' \left[f\right]$
+										& $\displaystyle \gradr''[f]$ \\[3mm]
+17& \verb|\hesse''!{f}|					& $\displaystyle \nabla''\otimes\nabla'' \left\{f\right\}$
+										& $\displaystyle \hesse''!{f}$ \\[3mm]
 \end{tabular}
 \end{table}
 

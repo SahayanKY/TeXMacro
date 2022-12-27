@@ -4,23 +4,61 @@
 \RequirePackage{xparse}
 \RequirePackage{amsmath}
 
-% settings for options in \usepackage[]{derivative}
-\newif\if@derivative@d@isRoman@
-\DeclareOption{romand}{\@derivative@d@isRoman@true}
-\DeclareOption{italicd}{\@derivative@d@isRoman@false}
-\ExecuteOptions{romand} % default options
-\ProcessOptions\relax
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % definitions
 \makeatletter
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% infinitesimal
-\if@derivative@d@isRoman@%
-	\newcommand{\@derivative@d}{\textrm{d}}%
-\else%
-	\newcommand{\@derivative@d}{\textit{d}}%
-\fi%
+% define 'setup variables' (& default value)
+\ExplSyntaxOn
+\newcommand{\@derivative@d}{}
+\newcommand{\@derivative@vecOp@opDeco@one}{}
+\newcommand{\@derivative@vecOp@opDeco@two}{}
+\newcommand{\@derivative@vecOp@opDeco@three}{}
+\newcommand{\@derivative@vecOp@opDeco@four}{}
+\newcommand{\@derivative@vecOp@opDeco@five}{}
+\newcommand{\laplace}{}
+\keys_define:nn{derivative}{
+	% infinitesimal
+	d .choice:,
+	d / roman .code:n  = \renewcommand{\@derivative@d}{\textrm{d}},
+	d / italic .code:n = \renewcommand{\@derivative@d}{d},
+	% vector operator
+	nabla-deco-1 .code:n = \renewcommand{\@derivative@vecOp@opDeco@one}{#1},
+	nabla-deco-2 .code:n = \renewcommand{\@derivative@vecOp@opDeco@two}{#1},
+	nabla-deco-3 .code:n = \renewcommand{\@derivative@vecOp@opDeco@three}{#1},
+	nabla-deco-4 .code:n = \renewcommand{\@derivative@vecOp@opDeco@four}{#1},
+	nabla-deco-5 .code:n = \renewcommand{\@derivative@vecOp@opDeco@five}{#1},
+	% laplacian
+	laplace .choice:,
+	laplace / nabla .code:n = \renewcommand{\laplace}{\laplacen},
+	laplace / delta .code:n = \renewcommand{\laplace}{\laplaced},
+	laplace / Delta .code:n = \renewcommand{\laplace}{\laplaced},
+}
+
+% setup macro for user
+\newcommand{\derivativesetup}[1]{
+	\keys_set:nn{derivative}{#1}
+}
+
+\derivativesetup{
+	d = roman,
+	nabla-deco-1 = ',
+	nabla-deco-2 = '',
+	nabla-deco-3 = ''',
+	nabla-deco-4 = '''',
+	nabla-deco-5 = ''''',
+	laplace = nabla,
+}
+\ExplSyntaxOff
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% settings for options in \usepackage[]{derivative}
+\DeclareOption{romand}{\derivativesetup{d = roman}}
+\DeclareOption{italicd}{\derivativesetup{d = italic}}
+\ExecuteOptions{romand} % default options
+\ProcessOptions\relax
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ordinary derivative
@@ -160,126 +198,160 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % vector operator (grad, div, rot(curl), laplace)
 
-% define inner variables
-\def\@derivative@vecOp@op{}
-% setting for operator (the part about nabla)
-\newcommand{\@derivative@vecOp@setOp}[8]{%
-	\renewcommand{\@derivative@vecOp@op}{%
-		{#8}%
-		%\IfBooleanT{#1}{'}\IfBooleanT{#2}{'}\IfBooleanT{#3}{'}%
-		%\IfBooleanT{#4}{'}\IfBooleanT{#5}{'}%
-		%-> Because super script problem occurs, rewrite as follows
-		\IfBooleanTF{#1}{%
-			\IfBooleanTF{#2}{%
-				\IfBooleanTF{#3}{%
-					\IfBooleanTF{#4}{%
-						\IfBooleanTF{#5}{%
-							'''''%
-						}{''''}%
-					}{'''}%
-				}{''}%
-			}{'}%
-		}{}%
-		\IfValueTF{#6}{%
-			{{}^{#6}_{#7}}%
+% inner macro
+\newcommand{\@derivative@vecOp@choiceDeco}[5]{
+	\IfBooleanTF{#1}{
+		\IfBooleanTF{#2}{
+			\IfBooleanTF{#3}{
+				\IfBooleanTF{#4}{
+					\IfBooleanTF{#5}{
+						\@derivative@vecOp@opDeco@five
+					}{
+						\@derivative@vecOp@opDeco@four
+					}
+				}{
+					\@derivative@vecOp@opDeco@three
+				}
+			}{
+				\@derivative@vecOp@opDeco@two
+			}
+		}{
+			\@derivative@vecOp@opDeco@one
+		}
+	}{}
+}
+
+\NewDocumentCommand\@derivative@vecOp@procTarget{d() d[] t! g}{%
+	\ensuremath{%
+		\IfValueTF{#1}{%
+			\@derivative@braceTagL(%
+				#1%
+			\@derivative@braceTagR)%
 		}{%
-			{}_{#7}%
+			\IfValueTF{#2}{%
+				\@derivative@braceTagL[%
+					#2%
+				\@derivative@braceTagR]%
+			}{%
+				\IfBooleanTF{#3}{% enforce to print {}
+					\IfValueT{#4}{%
+						\@derivative@braceTagL\{%
+							#4%
+						\@derivative@braceTagR\}%
+					}
+				}{%
+					\IfValueT{#4}{% no brace
+						#4%
+					}
+				}
+			}
 		}
 	}
 }
-\newcommand{\@derivative@vecOp@generic}[4]{%
-	\ensuremath{%
-		#1#2#3#4%
+\NewDocumentCommand\@derivative@vecOp@setBraceTag{t\big t\Big t\bigg t\Bigg}{%
+	\IfBooleanTF{#1}{
+		\let\@derivative@braceTagL\bigl
+		\let\@derivative@braceTagR\bigr
+	}{
+		\IfBooleanTF{#2}{
+			\let\@derivative@braceTagL\Bigl
+			\let\@derivative@braceTagR\Bigr
+		}{
+			\IfBooleanTF{#3}{
+				\let\@derivative@braceTagL\biggl
+				\let\@derivative@braceTagR\biggr
+			}{
+				\IfBooleanTF{#4}{
+					\let\@derivative@braceTagL\Biggl
+					\let\@derivative@braceTagR\Biggr
+				}{
+					\let\@derivative@braceTagL\left
+					\let\@derivative@braceTagR\right
+				}
+			}
+		}
 	}
+	\@derivative@vecOp@procTarget
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%% grad %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\NewDocumentCommand\grad{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op}{}{#8}{}%
+
+% main macro (vector operator)
+%
+% (| represents the position to be expanded)
+%   |\grad'''\big(f){g}
+%-> \nabla'''|\@derivative@vecOp@setBraceTag\big(f){g}
+%-> \nabla'''|\@derivative@vecOp@procTarget(f){g}
+%-> \nabla'''\bigl(f\bigr)|{g}
+%-> \nabla'''\bigl(f\bigr) g
+%
+%%%%%%%%%%%%%%%%%%%% grad %%%%%%%%%%%%%%%%%%%%%
+\NewDocumentCommand\grad{t't't't't'}{%
+	\ensuremath{%
+		\nabla\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}%
+	}%
+	\@derivative@vecOp@setBraceTag%
 }
-\NewDocumentCommand\Grad{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op}{\left(}{#8}{\right)}%
+\NewDocumentCommand\gradr{t't't't't'}{%
+	\ensuremath{%
+		\textrm{grad}\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}\,%
+	}%
+	\@derivative@vecOp@setBraceTag%
 }
-\NewDocumentCommand\gradr{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{grad}}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{}{#8}{}%
+%%%%%%%%%%%%%%%%%%%% div %%%%%%%%%%%%%%%%%%%%%
+\RenewDocumentCommand\div{t't't't't'}{%
+	\ensuremath{%
+		\nabla\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}\cdot%
+	}%
+	\@derivative@vecOp@setBraceTag%
 }
-\NewDocumentCommand\Gradr{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{grad}}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{\left(}{#8}{\right)}%
+\NewDocumentCommand\divr{t't't't't'}{%
+	\ensuremath{%
+		\textrm{div}\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}\,%
+	}%
+	\@derivative@vecOp@setBraceTag%
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%% div %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\RenewDocumentCommand\div{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op\cdot}{}{#8}{}%
+%%%%%%%%%%%%%%%%% rot, curl %%%%%%%%%%%%%%%%%%
+\NewDocumentCommand\rot{t't't't't'}{%
+	\ensuremath{%
+		\nabla\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}\times%
+	}%
+	\@derivative@vecOp@setBraceTag%
 }
-\NewDocumentCommand\Div{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op\cdot}{\left(}{#8}{\right)}%
-}
-\NewDocumentCommand\divr{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{div}}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{}{#8}{}%
-}
-\NewDocumentCommand\Divr{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{div}}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{\left(}{#8}{\right)}%
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%% rot, curl %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\NewDocumentCommand\rot{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op\times}{}{#8}{}%
-}
-\NewDocumentCommand\Rot{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op\times}{\left(}{#8}{\right)}%
-}
-\NewDocumentCommand\rotr{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{rot}}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{}{#8}{}%
-}
-\NewDocumentCommand\Rotr{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{rot}}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{\left(}{#8}{\right)}%
+\NewDocumentCommand\rotr{t't't't't'}{%
+	\ensuremath{%
+		\textrm{rot}\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}\,%
+	}%
+	\@derivative@vecOp@setBraceTag%
 }
 \newcommand{\curl}{\rot}
-\newcommand{\Curl}{\Rot}
-\NewDocumentCommand\curlr{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{curl}}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{}{#8}{}%
+\NewDocumentCommand\curlr{t't't't't'}{%
+	\ensuremath{%
+		\textrm{curl}\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}\,%
+	}%
+	\@derivative@vecOp@setBraceTag%
 }
-\NewDocumentCommand\Curlr{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\textrm{curl}}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op\,}{\left(}{#8}{\right)}%
+%%%%%%%%%%%%%%%%%% laplace %%%%%%%%%%%%%%%%%%%
+% \laplace is defined at setup
+%\newcommand{\laplace}{\laplacen}
+\NewDocumentCommand\laplacen{t't't't't'}{%
+	\ensuremath{%
+		\nabla\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}^{2}%
+	}%
+	\@derivative@vecOp@setBraceTag%
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%% laplace %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\laplace}{\laplacen}
-\NewDocumentCommand\laplacen{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op^{2}}{}{#8}{}%
+\NewDocumentCommand\laplaced{t't't't't'}{%
+	\ensuremath{%
+		\Delta\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}%
+	}%
+	\@derivative@vecOp@setBraceTag%
 }
-\NewDocumentCommand\Laplacen{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op^{2}}{\left(}{#8}{\right)}%
-}
-\NewDocumentCommand\laplaced{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\Delta}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op}{}{#8}{}%
-}
-\NewDocumentCommand\Laplaced{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\Delta}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op}{\left(}{#8}{\right)}%
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%% hesse %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\NewDocumentCommand\hesse{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op\otimes\@derivative@vecOp@op}{}{#8}{}%
-}
-\NewDocumentCommand\Hesse{t't't't't' d<> O{} m}{%
-	\@derivative@vecOp@setOp{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\nabla}%
-	\@derivative@vecOp@generic{\@derivative@vecOp@op\otimes\@derivative@vecOp@op}{\left(}{#8}{\right)}%
+%%%%%%%%%%%%%%%%%%% hesse %%%%%%%%%%%%%%%%%%%%
+\NewDocumentCommand\hesse{t't't't't'}{%
+	\ensuremath{%
+		\nabla\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}\otimes%
+		\nabla\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}%
+	}%
+	\@derivative@vecOp@setBraceTag%
 }
 
 
