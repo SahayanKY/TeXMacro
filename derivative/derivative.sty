@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[2019/10/01]
-\ProvidesPackage{derivative}[2022/12/28 v2.2]
+\ProvidesPackage{derivative}[2022/12/30 v2.3]
 
 \RequirePackage{xparse}
 \RequirePackage{amsmath}
@@ -61,6 +61,16 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% inner variables
+\newcommand{\@derivative@partial}{}
+\newcommand{\@derivative@partial@setTopdr}{%
+	\renewcommand{\@derivative@partial}{\partial}%
+}
+\newcommand{\@derivative@partial@setTofdr}{%
+	\renewcommand{\@derivative@partial}{\delta}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ordinary derivative
 \NewDocumentCommand\odr{m O{} m}{%
 	\frac{%
@@ -113,7 +123,7 @@
 	\ifx#3\@derivative@pdr@end%
 		% process numerator (final step)
 		\renewcommand{\@derivative@pdr@numerator}{%
-			\partial^{%
+			\@derivative@partial^{%
  				\if@derivative@pdr@calcOrder@%
  					\@derivative@pdr@printTotalOrder%
  				\else%
@@ -131,7 +141,7 @@
 		\expandafter\renewcommand%
 		\expandafter\@derivative@pdr@denominator%
 		\expandafter{%
-			\@derivative@pdr@denominator \partial #1^{#2}%
+			\@derivative@pdr@denominator \@derivative@partial #1^{#2}%
 		}%
 		%
 		% recursion
@@ -150,6 +160,7 @@
 \NewDocumentCommand{\pdr}{s m}{%
 	% initialize internal variables
 	\@derivative@pdr@resetInnerVar%
+	\@derivative@partial@setTopdr%
 	\IfBooleanTF{#1}{%
 		% do not calculate order if star, i.e. '*', is specified
 		\@derivative@pdr@calcOrder@false%
@@ -355,6 +366,27 @@
 }
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% functional derivative
+%
+% main macro
+% Reuse partial differential macro \pdr to implement
+\NewDocumentCommand{\fdr}{s m}{%
+	% initialize internal variables
+	\@derivative@pdr@resetInnerVar%
+	\@derivative@partial@setTofdr%
+	\IfBooleanTF{#1}{%
+		% do not calculate order if star, i.e. '*', is specified
+		\@derivative@pdr@calcOrder@false%
+	}{%
+		\@derivative@pdr@calcOrder@true%
+	}%
+	% process arguments
+	\@derivative@pdr#2\@derivative@pdr@end%
+	% print result
+	\frac{\@derivative@pdr@numerator}{\@derivative@pdr@denominator}%
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

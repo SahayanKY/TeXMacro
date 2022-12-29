@@ -255,7 +255,24 @@ No & command & expected & result \\
 \end{table}
 
 
-
+%
+%表を挿入
+\begin{table}[p]
+\centering
+\caption{
+	汎関数微分マクロの仕様確認
+}
+\begin{tabular}{cccc}
+No & command & expected & result \\
+\hline
+1& \verb|\fdr{{f}{F}}|					& $\displaystyle \frac{\delta F}{\delta f}$
+										& $\displaystyle \fdr{{f_1}{F}}$ \\[3mm]
+2& \verb|\fdr{{f_1}{f_2}{F}}|			& $\displaystyle \frac{\delta^2 F}{\delta f_1 \delta f_2}$
+										& $\displaystyle \fdr{{f_1}{f_2}{F}}$ \\[3mm]
+3& \verb|\fdr{{f_1(x)}{f_2(x')}{F}}|	& $\displaystyle \frac{\delta^2 F}{\delta f_1(x) \delta f_2(x')}$
+										& $\displaystyle \fdr{{f_1(x)}{f_2(x')}{F}}$ \\[3mm]
+\end{tabular}
+\end{table}
 
 
 \end{document}
