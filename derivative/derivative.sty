@@ -62,12 +62,12 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % inner variables
-\newcommand{\@derivative@partial}{}
-\newcommand{\@derivative@partial@setTopdr}{%
-	\renewcommand{\@derivative@partial}{\partial}%
+\newcommand{\@derivative@del}{}
+\newcommand{\@derivative@del@setTopdr}{%
+	\renewcommand{\@derivative@del}{\partial}%
 }
-\newcommand{\@derivative@partial@setTofdr}{%
-	\renewcommand{\@derivative@partial}{\delta}%
+\newcommand{\@derivative@del@setTofdr}{%
+	\renewcommand{\@derivative@del}{\delta}%
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,7 +123,7 @@
 	\ifx#3\@derivative@pdr@end%
 		% process numerator (final step)
 		\renewcommand{\@derivative@pdr@numerator}{%
-			\@derivative@partial^{%
+			\@derivative@del^{%
  				\if@derivative@pdr@calcOrder@%
  					\@derivative@pdr@printTotalOrder%
  				\else%
@@ -141,7 +141,7 @@
 		\expandafter\renewcommand%
 		\expandafter\@derivative@pdr@denominator%
 		\expandafter{%
-			\@derivative@pdr@denominator \@derivative@partial #1^{#2}%
+			\@derivative@pdr@denominator \@derivative@del #1^{#2}%
 		}%
 		%
 		% recursion
@@ -160,7 +160,7 @@
 \NewDocumentCommand{\pdr}{s m}{%
 	% initialize internal variables
 	\@derivative@pdr@resetInnerVar%
-	\@derivative@partial@setTopdr%
+	\@derivative@del@setTopdr%
 	\IfBooleanTF{#1}{%
 		% do not calculate order if star, i.e. '*', is specified
 		\@derivative@pdr@calcOrder@false%
@@ -375,7 +375,7 @@
 \NewDocumentCommand{\fdr}{s m}{%
 	% initialize internal variables
 	\@derivative@pdr@resetInnerVar%
-	\@derivative@partial@setTofdr%
+	\@derivative@del@setTofdr%
 	\IfBooleanTF{#1}{%
 		% do not calculate order if star, i.e. '*', is specified
 		\@derivative@pdr@calcOrder@false%
