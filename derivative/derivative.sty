@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[2019/10/01]
-\ProvidesPackage{derivative}[2022/12/30 v2.3]
+\ProvidesPackage{derivative}[2022/01/03 v2.4]
 
 \RequirePackage{xparse}
 \RequirePackage{amsmath}
@@ -296,71 +296,112 @@
 %-> \nabla'''\bigl(f\bigr) g
 %
 %%%%%%%%%%%%%%%%%%%% grad %%%%%%%%%%%%%%%%%%%%%
-\NewDocumentCommand\grad{t't't't't'}{%
+\NewDocumentCommand\grad{d<>t't't't't'}{%
 	\ensuremath{%
-		\nabla\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}%
+		\IfValueTF{#1}{%
+			\nabla_{#1}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}%
+		}{%
+			\nabla\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}%
+		}
 	}%
 	\@derivative@vecOp@setBraceTag%
 }
-\NewDocumentCommand\gradr{t't't't't'}{%
+\NewDocumentCommand\gradr{d<>t't't't't'}{%
 	\ensuremath{%
-		\textrm{grad}\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}\,%
+		\IfValueTF{#1}{%
+			\textrm{grad}_{#1}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}\,%
+		}{%
+			\textrm{grad}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}\,%
+		}
 	}%
 	\@derivative@vecOp@setBraceTag%
 }
 %%%%%%%%%%%%%%%%%%%% div %%%%%%%%%%%%%%%%%%%%%
-\RenewDocumentCommand\div{t't't't't'}{%
+\RenewDocumentCommand\div{d<>t't't't't'}{%
 	\ensuremath{%
-		\nabla\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}\cdot%
+		\IfValueTF{#1}{%
+			\nabla_{#1}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}\cdot%
+		}{%
+			\nabla\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}\cdot%
+		}
 	}%
 	\@derivative@vecOp@setBraceTag%
 }
-\NewDocumentCommand\divr{t't't't't'}{%
+\NewDocumentCommand\divr{d<>t't't't't'}{%
 	\ensuremath{%
-		\textrm{div}\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}\,%
+		\IfValueTF{#1}{%
+			\textrm{div}_{#1}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}\,%
+		}{%
+			\textrm{div}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}\,%
+		}
 	}%
 	\@derivative@vecOp@setBraceTag%
 }
 %%%%%%%%%%%%%%%%% rot, curl %%%%%%%%%%%%%%%%%%
-\NewDocumentCommand\rot{t't't't't'}{%
+\NewDocumentCommand\rot{d<>t't't't't'}{%
 	\ensuremath{%
-		\nabla\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}\times%
+		\IfValueTF{#1}{%
+			\nabla_{#1}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}\times%
+		}{%
+			\nabla\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}\times%
+		}
 	}%
 	\@derivative@vecOp@setBraceTag%
 }
-\NewDocumentCommand\rotr{t't't't't'}{%
+\NewDocumentCommand\rotr{d<>t't't't't'}{%
 	\ensuremath{%
-		\textrm{rot}\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}\,%
+		\IfValueTF{#1}{%
+			\textrm{rot}_{#1}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}\,%
+		}{%
+			\textrm{rot}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}\,%
+		}
 	}%
 	\@derivative@vecOp@setBraceTag%
 }
 \newcommand{\curl}{\rot}
-\NewDocumentCommand\curlr{t't't't't'}{%
+\NewDocumentCommand\curlr{d<>t't't't't'}{%
 	\ensuremath{%
-		\textrm{curl}\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}\,%
+		\IfValueTF{#1}{%
+			\textrm{curl}_{#1}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}\,%
+		}{%
+			\textrm{curl}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}\,%
+		}
 	}%
 	\@derivative@vecOp@setBraceTag%
 }
 %%%%%%%%%%%%%%%%%% laplace %%%%%%%%%%%%%%%%%%%
 % \laplace is defined at setup
 %\newcommand{\laplace}{\laplacen}
-\NewDocumentCommand\laplacen{t't't't't'}{%
+\NewDocumentCommand\laplacen{d<>t't't't't'}{%
 	\ensuremath{%
-		\nabla\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}^{2}%
+		\IfValueTF{#1}{%
+			\nabla_{#1}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}^{2}%
+		}{%
+			\nabla\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}^{2}%
+		}
 	}%
 	\@derivative@vecOp@setBraceTag%
 }
-\NewDocumentCommand\laplaced{t't't't't'}{%
+\NewDocumentCommand\laplaced{d<>t't't't't'}{%
 	\ensuremath{%
-		\Delta\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}%
+		\IfValueTF{#1}{%
+			\Delta_{#1}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}%
+		}{%
+			\Delta\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}%
+		}
 	}%
 	\@derivative@vecOp@setBraceTag%
 }
 %%%%%%%%%%%%%%%%%%% hesse %%%%%%%%%%%%%%%%%%%%
-\NewDocumentCommand\hesse{t't't't't'}{%
+\NewDocumentCommand\hesse{d<>t't't't't'}{%
 	\ensuremath{%
-		\nabla\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}\otimes%
-		\nabla\@derivative@vecOp@choiceDeco{#1}{#2}{#3}{#4}{#5}%
+		\IfValueTF{#1}{%
+			\nabla_{#1}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}\otimes%
+			\nabla_{#1}\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}%
+		}{%
+			\nabla\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}\otimes%
+			\nabla\@derivative@vecOp@choiceDeco{#2}{#3}{#4}{#5}{#6}%
+		}
 	}%
 	\@derivative@vecOp@setBraceTag%
 }

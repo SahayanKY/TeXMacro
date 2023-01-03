@@ -184,6 +184,46 @@ No & command & expected & result \\
 \end{tabular}
 \end{table}
 
+%
+%表を挿入
+\begin{table}[p]
+\centering
+\caption{
+	ベクトル演算子マクロの仕様確認1。
+	基本的なマクロ利用例。
+}
+\begin{tabular}{cccc}
+No & command & expected & result \\
+\hline
+1& \verb|\grad{f}|						& $\displaystyle \nabla f$
+										& $\displaystyle \grad{f}$ \\[3mm]
+2& \verb|\div\bm{v}|					& $\displaystyle \nabla\cdot\bm{v}$
+										& $\displaystyle \div\bm{v}$ \\[3mm]
+3& \verb|\rot\bm{v}|					& $\displaystyle \nabla\times\bm{v}$
+										& $\displaystyle \rot\bm{v}$ \\[3mm]
+4& \verb|\curl\bm{v}|					& $\displaystyle \nabla\times\bm{v}$
+										& $\displaystyle \curl\bm{v}$ \\[3mm]
+5& \verb|\laplace{f}|					& $\displaystyle \nabla^2 f$
+										& $\displaystyle \laplace{f}$ \\[3mm]
+6& \verb|\laplaced{f}|					& $\displaystyle \Delta f$
+										& $\displaystyle \laplaced{f}$ \\[3mm]
+7& \verb|\laplacen{f}|					& $\displaystyle \nabla^2 f$
+										& $\displaystyle \laplacen{f}$ \\[3mm]
+8& \verb|\hesse{f}|						& $\displaystyle \nabla\otimes\nabla f$
+										& $\displaystyle \hesse{f}$ \\[3mm]
+9& \verb|\gradr{f}|						& $\displaystyle \textrm{grad}\, f$
+										& $\displaystyle \gradr{f}$ \\[3mm]
+10& \verb|\divr{\bm{v}}|				& $\displaystyle \textrm{div}\, \bm{v}$
+										& $\displaystyle \divr{\bm{v}}$ \\[3mm]
+11& \verb|\rotr{\bm{v}}|				& $\displaystyle \textrm{rot}\, \bm{v}$
+										& $\displaystyle \rotr{\bm{v}}$ \\[3mm]
+12& \verb|\curlr{\bm{v}}|				& $\displaystyle \textrm{curl}\, \bm{v}$
+										& $\displaystyle \curlr{\bm{v}}$ \\[3mm]
+\end{tabular}
+\end{table}
+
+
+
 \derivativesetup{
 	nabla-deco-1 = ',
 	nabla-deco-2 = '',
@@ -204,55 +244,41 @@ No & command & expected & result \\
 }
 \end{lstlisting}
 \end{table}
+
 %
 %表を挿入
 \begin{table}[p]
 \centering
 \caption{
-	ベクトル演算子マクロの仕様確認。
+	ベクトル演算子マクロの仕様確認2。
 	コード\ref{lstDerivativeSetup3}による設定を適用した場合の挙動
 }
 \begin{tabular}{cccc}
 No & command & expected & result \\
 \hline
-1& \verb|\grad{f}|						& $\displaystyle \nabla f$
-										& $\displaystyle \grad{f}$ \\[3mm]
-2& \verb|\div\bm{v}|					& $\displaystyle \nabla\cdot\bm{v}$
-										& $\displaystyle \div\bm{v}$ \\[3mm]
-3& \verb|\rot\bm{v}|					& $\displaystyle \nabla\times\bm{v}$
-										& $\displaystyle \rot\bm{v}$ \\[3mm]
-4& \verb|\curl\bm{v}|					& $\displaystyle \nabla\times\bm{v}$
-										& $\displaystyle \curl\bm{v}$ \\[3mm]
-5& \verb|\laplace{f}|					& $\displaystyle \Delta f$
-										& $\displaystyle \laplace{f}$ \\[3mm]
-6& \verb|\laplaced{f}|					& $\displaystyle \Delta f$
-										& $\displaystyle \laplaced{f}$ \\[3mm]
-7& \verb|\laplacen{f}|					& $\displaystyle \nabla^2 f$
-										& $\displaystyle \laplacen{f}$ \\[3mm]
-8& \verb|\hesse{f}|						& $\displaystyle \nabla\otimes\nabla f$
-										& $\displaystyle \hesse{f}$ \\[3mm]
-9& \verb|\gradr{f}|						& $\displaystyle \textrm{grad}\, f$
-										& $\displaystyle \gradr{f}$ \\[3mm]
-10& \verb|\divr{\bm{v}}|				& $\displaystyle \textrm{div}\, \bm{v}$
-										& $\displaystyle \divr{\bm{v}}$ \\[3mm]
-11& \verb|\rotr{\bm{v}}|				& $\displaystyle \textrm{rot}\, \bm{v}$
-										& $\displaystyle \rotr{\bm{v}}$ \\[3mm]
-12& \verb|\curlr{\bm{v}}|				& $\displaystyle \textrm{curl}\, \bm{v}$
-										& $\displaystyle \curlr{\bm{v}}$ \\[3mm]
-13& \verb|\grad'{f}|					& $\displaystyle \nabla' f$
+1& \verb|\grad'{f}|						& $\displaystyle \nabla' f$
 										& $\displaystyle \grad'{f}$ \\[3mm]
-14& \verb|\grad''{f}|					& $\displaystyle \nabla'' f$
-										& $\displaystyle \grad''{f}$ \\[3mm]
-15& \verb|\grad'''(\frac{f}{g})|		& $\displaystyle \nabla_{\bm{r}'''} \left(\frac{f}{g}\right)$
+2& \verb|\grad''!{f}|					& $\displaystyle \nabla'' \{f\}$
+										& $\displaystyle \grad''!{f}$ \\[3mm]
+3& \verb|\grad'''(\frac{f}{g})|			& $\displaystyle \nabla_{\bm{r}'''} \left(\frac{f}{g}\right)$
 										& $\displaystyle \grad'''(\frac{f}{g})$ \\[3mm]
-16& \verb|\gradr''[f]|					& $\displaystyle \textrm{grad}'' \left[f\right]$
-										& $\displaystyle \gradr''[f]$ \\[3mm]
-17& \verb|\laplacen''{f}|				& $\displaystyle \nabla''^2 f$
+4& \verb|\grad<i>[f]|					& $\displaystyle \nabla_{i} [f]$
+										& $\displaystyle \grad<i>[f]$ \\[3mm]
+5& \verb|\grad<i>'{f}|					& $\displaystyle \nabla_{i}' f$
+										& $\displaystyle \grad<i>'{f}$ \\[3mm]
+6& \verb|\grad''\bigg(f)|				& $\displaystyle \nabla'' \biggl(f\biggr)$
+										& $\displaystyle \grad''\bigg(f)$ \\[3mm]
+7& \verb|\laplacen''{f}|				& $\displaystyle \nabla''^2 f$
 										& $\displaystyle \laplacen''{f}$ \\[3mm]
-18& \verb|\hesse''!{f}|					& $\displaystyle \nabla''\otimes\nabla'' \left\{f\right\}$
-										& $\displaystyle \hesse''!{f}$ \\[3mm]
+8& \verb|\laplace''{f}|					& $\displaystyle \Delta'' f$
+										& $\displaystyle \laplace''{f}$ \\[3mm]
+9& \verb|\hesse<\bm{r}_1>{f}|			& $\displaystyle \nabla_{\bm{r}_1}\otimes\nabla_{\bm{r}_1} f$
+										& $\displaystyle \hesse<\bm{r}_1>{f}$ \\[3mm]
 \end{tabular}
 \end{table}
+
+
+
 
 
 %
