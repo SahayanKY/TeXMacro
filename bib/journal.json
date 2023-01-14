@@ -7,9 +7,9 @@
 	"Advanced Drug Delivery Reviews" : "Adv. Drug Deliv. Rev.",
 	"Advanced Functional Materials" : "Adv. Funct. Mater.",
 	"Advanced Synthesis & Catalysis" : "Adv. Synth. Catal.",
-	"Advances in Neural Information Processing Systems" : "",
 	"Analytical Chemistry" : "Anal. Chem.",
 	"Angewandte Chemie International Edition" : "Angew. Chem. Int. Ed.",
+	"Angewandte Chemie (International ed.)" : "Angew. Chem. Int. Ed.",
 	"Applied Physics Letters" : "Appl. Phys. Lett.",
 	"Asian Journal of Organic Chemistry" : "Asian J. Org. Chem.",
 	"Bulletin of Japan Society of Coordination Chemistry" : "Bull. Jpn. Soc. Coord. Chem.",
@@ -73,6 +73,7 @@
 	"Physica" : "Physica",
 	"Physical Chemistry Chemical Physics" : "Phys. Chem. Chem. Phys.",
 	"Physical Review B" : "Phys. Rev. B",
+	"Physical review. B, Condensed matter" : "Phys. Rev. B",
 	"Physical Review Letters" : "Phys. Rev. Lett.",
 	"Physical Review" : "Phys. Rev.",
 	"Polymer Chemistry" : "Polym. Chem.",
@@ -92,6 +93,8 @@
 	"Tetrahedron: Asymmetry" : "Tetrahedron Asymm.",
 	"The Journal of Chemical Physics" : "J. Chem. Phys.",
 	"The Journal of Organic Chemistry" : "J. Org. Chem.",
+	"The journal of physical chemistry. A" : "J. Phys. Chem. A",
 	"The Journal of Physical Chemistry A" : "J. Phys. Chem. A",
+	"The journal of physical chemistry. B" : "J. Phys. Chem. B",
 	"The Journal of Physical Chemistry B" : "J. Phys. Chem. B"
 }
