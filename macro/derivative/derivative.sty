@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[2019/10/01]
-\ProvidesPackage{derivative}[2022/01/03 v2.4]
+\ProvidesPackage{derivative}[2022/02/17 v2.5]
 
 \RequirePackage{xparse}
 \RequirePackage{amsmath}
@@ -69,6 +69,22 @@
 \newcommand{\@derivative@del@setTofdr}{%
 	\renewcommand{\@derivative@del}{\delta}%
 }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% infinitesimal
+% \d is already defined as an accent macro.
+% Therefore, make the behavior change depending on whether the current process is in math mode or not.
+\let\@derivative@org@d\d % the original \d macro
+\renewcommand{\d}{%
+	\ifmmode%
+		% if in math mode
+		\@derivative@d%
+	\else%
+		\expandafter\@derivative@org@d%
+	\fi%
+}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ordinary derivative

@@ -6,9 +6,28 @@
 
 \usepackage{derivative}
 
-\renewcommand{\d}{\textrm{d}}
-
 \begin{document}
+
+%
+%表を挿入
+\begin{table}[p]
+\centering
+\caption{
+	微小量dマクロの仕様確認。
+	数式モード中かどうかで挙動を変える
+}
+\begin{tabular}{cccc}
+No & command & expected & result \\
+\hline
+1&	\verb|$\d x$|					& $\displaystyle \textrm{d} x$
+									& $\displaystyle \d x$ \\[3mm]
+2&	\verb|\d x|						&
+									& \d x \\[3mm]
+\end{tabular}
+\end{table}
+
+
+
 \derivativesetup{
 	d = roman,
 }
